@@ -4,6 +4,8 @@ require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json; charset=UTF-8');
 
+set_time_limit(120);
+
 
 /* ============================================================
    RESPONSE JSON
@@ -59,7 +61,7 @@ function normalisasi(string $text): string
 
 
 /* ============================================================
-   URL API
+   API URL
 ============================================================ */
 
 function apiUrl(string $path): string
@@ -72,47 +74,102 @@ function apiUrl(string $path): string
 
 
 /* ============================================================
-   HTTP GET KE PDDIKTI
+   HEADER PDDIKTI
+============================================================ */
+
+function headerPddikti(
+    bool $json = false
+): array {
+
+    $headers = [
+
+        'Accept: application/json, text/plain, */*',
+
+        'Accept-Language: id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+
+        'Origin: https://pddikti.kemdiktisaintek.go.id',
+
+        'Referer: https://pddikti.kemdiktisaintek.go.id/',
+
+        'Sec-Fetch-Dest: empty',
+
+        'Sec-Fetch-Mode: cors',
+
+        'Sec-Fetch-Site: same-origin'
+    ];
+
+
+    if ($json) {
+
+        $headers[] =
+            'Content-Type: application/json';
+    }
+
+
+    return $headers;
+}
+
+
+/* ============================================================
+   GET PDDIKTI
 ============================================================ */
 
 function apiGet(string $url): array
 {
-    $ch = curl_init();
+    $ch =
+        curl_init();
+
 
     curl_setopt_array(
         $ch,
         [
-            CURLOPT_URL            => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_TIMEOUT        => 30,
-            CURLOPT_ENCODING       => '',
+            CURLOPT_URL =>
+                $url,
+
+            CURLOPT_RETURNTRANSFER =>
+                true,
+
+            CURLOPT_FOLLOWLOCATION =>
+                true,
+
+            CURLOPT_CONNECTTIMEOUT =>
+                10,
+
+            CURLOPT_TIMEOUT =>
+                30,
+
+            CURLOPT_ENCODING =>
+                '',
 
             CURLOPT_USERAGENT =>
                 API_USER_AGENT,
 
-            CURLOPT_HTTPHEADER => [
-                'Accept: application/json, text/plain, */*',
-                'Accept-Language: id-ID,id;q=0.9,en-US;q=0.8',
-                'Referer: https://pddikti.kemdiktisaintek.go.id/'
-            ],
+            CURLOPT_HTTPHEADER =>
+                headerPddikti(false),
 
-            // Untuk praktikum localhost.
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false
+            CURLOPT_SSL_VERIFYPEER =>
+                false,
+
+            CURLOPT_SSL_VERIFYHOST =>
+                false
         ]
     );
 
 
-    $body = curl_exec($ch);
+    $body =
+        curl_exec($ch);
 
-    $curlError = curl_error($ch);
 
-    $httpCode = curl_getinfo(
-        $ch,
-        CURLINFO_HTTP_CODE
-    );
+    $error =
+        curl_error($ch);
+
+
+    $httpCode =
+        curl_getinfo(
+            $ch,
+            CURLINFO_HTTP_CODE
+        );
+
 
     curl_close($ch);
 
@@ -120,18 +177,19 @@ function apiGet(string $url): array
     if ($body === false) {
 
         return [
-            'ok'     => false,
+            'ok' => false,
             'status' => 0,
-            'error'  => $curlError,
-            'data'   => null
+            'error' => $error,
+            'data' => null
         ];
     }
 
 
-    $json = json_decode(
-        $body,
-        true
-    );
+    $json =
+        json_decode(
+            $body,
+            true
+        );
 
 
     if (
@@ -140,10 +198,10 @@ function apiGet(string $url): array
     ) {
 
         return [
-            'ok'     => false,
+            'ok' => false,
             'status' => $httpCode,
-            'error'  => 'HTTP Error ' . $httpCode,
-            'data'   => is_array($json)
+            'error' => 'HTTP Error ' . $httpCode,
+            'data' => is_array($json)
                 ? $json
                 : null
         ];
@@ -153,38 +211,255 @@ function apiGet(string $url): array
     if (!is_array($json)) {
 
         return [
-            'ok'     => false,
+            'ok' => false,
             'status' => $httpCode,
-            'error'  => 'Response PDDIKTI bukan JSON valid.',
-            'data'   => null
+            'error' => 'Response bukan JSON valid.',
+            'data' => null
         ];
     }
 
 
     return [
-        'ok'     => true,
+        'ok' => true,
         'status' => $httpCode,
-        'error'  => null,
-        'data'   => $json
+        'error' => null,
+        'data' => $json
     ];
 }
 
 
 /* ============================================================
-   PENCARIAN UMUM PDDIKTI
+   POST JSON PDDIKTI
+============================================================ */
+
+function apiPostJson(
+    string $url,
+    array $payload
+): array {
+
+    $payloadJson =
+        json_encode(
+            $payload,
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES
+        );
+
+
+    $ch =
+        curl_init();
+
+
+    curl_setopt_array(
+        $ch,
+        [
+            CURLOPT_URL =>
+                $url,
+
+            CURLOPT_POST =>
+                true,
+
+            CURLOPT_POSTFIELDS =>
+                $payloadJson,
+
+            CURLOPT_RETURNTRANSFER =>
+                true,
+
+            CURLOPT_FOLLOWLOCATION =>
+                true,
+
+            CURLOPT_CONNECTTIMEOUT =>
+                10,
+
+            CURLOPT_TIMEOUT =>
+                30,
+
+            CURLOPT_ENCODING =>
+                '',
+
+            CURLOPT_USERAGENT =>
+                API_USER_AGENT,
+
+            CURLOPT_HTTPHEADER =>
+                headerPddikti(true),
+
+            CURLOPT_SSL_VERIFYPEER =>
+                false,
+
+            CURLOPT_SSL_VERIFYHOST =>
+                false
+        ]
+    );
+
+
+    $body =
+        curl_exec($ch);
+
+
+    $error =
+        curl_error($ch);
+
+
+    $httpCode =
+        curl_getinfo(
+            $ch,
+            CURLINFO_HTTP_CODE
+        );
+
+
+    curl_close($ch);
+
+
+    if ($body === false) {
+
+        return [
+            'ok' => false,
+            'status' => 0,
+            'error' => $error,
+            'data' => null
+        ];
+    }
+
+
+    $json =
+        json_decode(
+            $body,
+            true
+        );
+
+
+    if (
+        $httpCode < 200 ||
+        $httpCode >= 300
+    ) {
+
+        return [
+            'ok' => false,
+            'status' => $httpCode,
+            'error' => 'HTTP Error ' . $httpCode,
+            'data' => is_array($json)
+                ? $json
+                : null
+        ];
+    }
+
+
+    if (!is_array($json)) {
+
+        return [
+            'ok' => false,
+            'status' => $httpCode,
+            'error' => 'Response bukan JSON valid.',
+            'data' => null
+        ];
+    }
+
+
+    return [
+        'ok' => true,
+        'status' => $httpCode,
+        'error' => null,
+        'data' => $json
+    ];
+}
+
+
+/* ============================================================
+   CACHE
+============================================================ */
+
+function cacheFilename(string $key): string
+{
+    return
+        CACHE_DIR
+        . '/'
+        . sha1($key)
+        . '.json';
+}
+
+
+function bacaCache(string $key)
+{
+    $file =
+        cacheFilename($key);
+
+
+    if (!file_exists($file)) {
+
+        return null;
+    }
+
+
+    if (
+        time() - filemtime($file)
+        >
+        CACHE_TTL
+    ) {
+
+        return null;
+    }
+
+
+    $content =
+        @file_get_contents($file);
+
+
+    if (!$content) {
+
+        return null;
+    }
+
+
+    $data =
+        json_decode(
+            $content,
+            true
+        );
+
+
+    return is_array($data)
+        ? $data
+        : null;
+}
+
+
+function simpanCache(
+    string $key,
+    $data
+): void {
+
+    if (!is_dir(CACHE_DIR)) {
+
+        @mkdir(
+            CACHE_DIR,
+            0777,
+            true
+        );
+    }
+
+
+    @file_put_contents(
+        cacheFilename($key),
+
+        json_encode(
+            $data,
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES |
+            JSON_PRETTY_PRINT
+        )
+    );
+}
+
+
+/* ============================================================
+   SEARCH PDDIKTI
 ============================================================ */
 
 function pencarianPddikti(
     string $keyword
 ): array {
 
-    $keyword = trim($keyword);
-
-
-    if ($keyword === '') {
-
-        return [];
-    }
+    $keyword =
+        trim($keyword);
 
 
     $url =
@@ -202,7 +477,7 @@ function pencarianPddikti(
     if (!$response['ok']) {
 
         throw new Exception(
-            'Gagal mengakses API PDDIKTI: '
+            'Gagal mengakses PDDIKTI: '
             .
             $response['error']
         );
@@ -225,38 +500,37 @@ function pencarianPddikti(
     }
 
 
-    $data =
+    return
         $json['data']
         ??
         [];
-
-
-    return is_array($data)
-        ? $data
-        : [];
 }
 
 
 /* ============================================================
-   DAFTAR PROGRAM STUDI PNL
-
-   Sumber:
-   GET /api/pencarian/enc/all/
-       Politeknik Negeri Lhokseumawe
-
-   Response:
-   data.prodi[]
-
-   Field:
-   - id
-   - nama
-   - jenjang
-   - pt
-   - pt_singkat
+   PROGRAM STUDI PNL
 ============================================================ */
 
 function ambilProgramStudi(): array
 {
+    $cacheKey =
+        'prodi-pnl-v5';
+
+
+    $cached =
+        bacaCache($cacheKey);
+
+
+    if (
+        is_array($cached)
+        &&
+        count($cached) > 0
+    ) {
+
+        return $cached;
+    }
+
+
     $data =
         pencarianPddikti(
             PT_NAME
@@ -269,96 +543,82 @@ function ambilProgramStudi(): array
         [];
 
 
-    if (!is_array($daftar)) {
-
-        return [];
-    }
+    $hasil =
+        [];
 
 
-    $hasil = [];
+    if (is_array($daftar)) {
 
-
-    foreach ($daftar as $prodi) {
-
-        $namaPt =
-            trim(
-                $prodi['pt']
-                ??
-                ''
-            );
-
-
-        /**
-         * Hanya program studi PNL.
-         */
-        if (
-            normalisasi($namaPt)
-            !==
-            normalisasi(PT_NAME)
+        foreach (
+            $daftar
+            as
+            $prodi
         ) {
 
-            continue;
-        }
-
-
-        $nama =
-            trim(
-                $prodi['nama']
-                ??
-                ''
-            );
-
-
-        $jenjang =
-            trim(
-                $prodi['jenjang']
-                ??
-                ''
-            );
-
-
-        if ($nama === '') {
-
-            continue;
-        }
-
-
-        /**
-         * Cegah duplikat.
-         */
-        $key =
-            normalisasi(
-                $jenjang
-                .
-                '|'
-                .
-                $nama
-            );
-
-
-        $hasil[$key] = [
-
-            'id' =>
-                $prodi['id']
-                ??
-                '',
-
-            'nama_prodi' =>
-                $nama,
-
-            'jenjang' =>
-                $jenjang,
-
-            'pt' =>
-                $namaPt,
-
-            'pt_singkat' =>
+            $namaPt =
                 trim(
-                    $prodi['pt_singkat']
+                    $prodi['pt']
                     ??
                     ''
-                )
-        ];
+                );
+
+
+            if (
+                normalisasi($namaPt)
+                !==
+                normalisasi(PT_NAME)
+            ) {
+
+                continue;
+            }
+
+
+            $nama =
+                trim(
+                    $prodi['nama']
+                    ??
+                    ''
+                );
+
+
+            $jenjang =
+                trim(
+                    $prodi['jenjang']
+                    ??
+                    ''
+                );
+
+
+            if ($nama === '') {
+
+                continue;
+            }
+
+
+            $key =
+                normalisasi(
+                    $jenjang
+                    .
+                    '|'
+                    .
+                    $nama
+                );
+
+
+            $hasil[$key] = [
+
+                'id' =>
+                    $prodi['id']
+                    ??
+                    '',
+
+                'nama_prodi' =>
+                    $nama,
+
+                'jenjang' =>
+                    $jenjang
+            ];
+        }
     }
 
 
@@ -380,75 +640,193 @@ function ambilProgramStudi(): array
     );
 
 
+    if (count($hasil) > 0) {
+
+        simpanCache(
+            $cacheKey,
+            $hasil
+        );
+    }
+
+
     return $hasil;
 }
 
 
 /* ============================================================
-   CARI JENJANG PRODI
+   MAP JENJANG
 ============================================================ */
 
-function cariJenjangProdi(
-    string $namaProdi
-): string {
-
-    $target =
-        normalisasi(
-            $namaProdi
-        );
+function mapJenjangProdi(): array
+{
+    $hasil = [];
 
 
-    $daftar =
-        ambilProgramStudi();
+    foreach (
+        ambilProgramStudi()
+        as
+        $prodi
+    ) {
 
-
-    foreach ($daftar as $prodi) {
-
-        if (
+        $hasil[
             normalisasi(
                 $prodi['nama_prodi']
             )
-            ===
-            $target
-        ) {
-
-            return
-                $prodi['jenjang']
-                ??
-                '-';
-        }
+        ] =
+            $prodi['jenjang'];
     }
 
 
-    return '-';
+    return $hasil;
 }
 
 
 /* ============================================================
-   TAHUN ANGKATAN DARI NIM
+   DETAIL MAHASISWA
 
-   Contoh:
-   2026583020046
-   ↓
-   2026
+   METODE YANG SUDAH BERHASIL:
 
-   CATATAN:
-   Ini bukan field tanggal_masuk PDDIKTI.
-   Ini interpretasi 4 digit awal NIM.
+   POST /api/detail/mhs
+
+   BODY:
+   {
+       "id": "..."
+   }
 ============================================================ */
 
-function tahunDariNim(
-    string $nim
+function ambilDetailMahasiswa(
+    string $id
+): array {
+
+    $id =
+        trim($id);
+
+
+    if ($id === '') {
+
+        return [
+            'ok' => false,
+            'data' => [],
+            'error' => 'ID kosong.'
+        ];
+    }
+
+
+    $cacheKey =
+        'detail-mhs-v5-'
+        .
+        sha1($id);
+
+
+    $cached =
+        bacaCache($cacheKey);
+
+
+    if (is_array($cached)) {
+
+        return [
+            'ok' => true,
+            'data' => $cached,
+            'error' => null
+        ];
+    }
+
+
+    $response =
+        apiPostJson(
+
+            apiUrl(
+                'detail/mhs'
+            ),
+
+            [
+                'id' => $id
+            ]
+        );
+
+
+    if (!$response['ok']) {
+
+        return [
+            'ok' => false,
+            'data' => [],
+            'error' => $response['error']
+        ];
+    }
+
+
+    $json =
+        $response['data'];
+
+
+    if (
+        ($json['status'] ?? '')
+        !==
+        'success'
+    ) {
+
+        return [
+            'ok' => false,
+            'data' => [],
+            'error' =>
+                $json['message']
+                ??
+                'Status detail bukan success.'
+        ];
+    }
+
+
+    $detail =
+        $json['data']
+        ??
+        [];
+
+
+    if (!is_array($detail)) {
+
+        return [
+            'ok' => false,
+            'data' => [],
+            'error' => 'Detail mahasiswa tidak valid.'
+        ];
+    }
+
+
+    /*
+     * Hanya cache response yang berhasil.
+     */
+    simpanCache(
+        $cacheKey,
+        $detail
+    );
+
+
+    return [
+        'ok' => true,
+        'data' => $detail,
+        'error' => null
+    ];
+}
+
+
+/* ============================================================
+   AMBIL TAHUN DARI TANGGAL MASUK
+
+   BUKAN DARI NIM.
+============================================================ */
+
+function tahunDariTanggalMasuk(
+    string $tanggal
 ): string {
 
-    $nim =
-        trim($nim);
+    $tanggal =
+        trim($tanggal);
 
 
     if (
         preg_match(
-            '/^((?:19|20)\d{2})/',
-            $nim,
+            '/^(\d{4})/',
+            $tanggal,
             $match
         )
     ) {
@@ -462,13 +840,12 @@ function tahunDariNim(
 
 
 /* ============================================================
-   SEARCH MAHASISWA
+   SEARCH MAHASISWA DASAR
 ============================================================ */
 
-function cariMahasiswa(
+function cariMahasiswaDasar(
     string $keyword,
-    string $prodi = '',
-    string $tahun = ''
+    string $prodi = 'all'
 ): array {
 
     $data =
@@ -489,25 +866,35 @@ function cariMahasiswa(
     }
 
 
-    $hasil = [];
+    $hasil =
+        [];
 
 
-    $targetProdi =
-        normalisasi(
-            $prodi
+    $filterProdi =
+        (
+            $prodi !== ''
+            &&
+            $prodi !== 'all'
         );
 
 
-    foreach ($mahasiswa as $mhs) {
+    $targetProdi =
+        $filterProdi
+            ? normalisasi($prodi)
+            : '';
 
-        /**
-         * ====================================================
-         * FILTER PERGURUAN TINGGI
-         * ====================================================
+
+    foreach (
+        $mahasiswa
+        as
+        $mhs
+    ) {
+
+        /*
+         * Hanya PNL.
          */
-
         $namaPt =
-            normalisasi(
+            trim(
                 $mhs['nama_pt']
                 ??
                 ''
@@ -515,23 +902,18 @@ function cariMahasiswa(
 
 
         if (
-            $namaPt
+            normalisasi($namaPt)
             !==
-            normalisasi(
-                PT_NAME
-            )
+            normalisasi(PT_NAME)
         ) {
 
             continue;
         }
 
 
-        /**
-         * ====================================================
-         * FILTER PROGRAM STUDI
-         * ====================================================
+        /*
+         * Filter prodi jika dipilih.
          */
-
         $namaProdi =
             trim(
                 $mhs['nama_prodi']
@@ -541,7 +923,7 @@ function cariMahasiswa(
 
 
         if (
-            $prodi !== ''
+            $filterProdi
             &&
             normalisasi($namaProdi)
             !==
@@ -552,58 +934,218 @@ function cariMahasiswa(
         }
 
 
-        /**
-         * ====================================================
-         * TAHUN ANGKATAN
-         * ====================================================
-         */
+        $hasil[] =
+            $mhs;
 
-        $nim =
+
+        /*
+         * Ikuti batas search API.
+         */
+        if (
+            defined('MAX_MAHASISWA')
+            &&
+            count($hasil) >= MAX_MAHASISWA
+        ) {
+
+            break;
+        }
+    }
+
+
+    return $hasil;
+}
+
+
+/* ============================================================
+   LENGKAPI DATA DENGAN DETAIL
+============================================================ */
+
+function lengkapiMahasiswa(
+    array $mahasiswa
+): array {
+
+    $hasil =
+        [];
+
+
+    $mapJenjang =
+        mapJenjangProdi();
+
+
+    foreach (
+        $mahasiswa
+        as
+        $mhs
+    ) {
+
+        $id =
             trim(
-                $mhs['nim']
+                $mhs['id']
                 ??
                 ''
             );
 
 
-        $tahunAngkatan =
-            tahunDariNim(
-                $nim
-            );
-
-
-        if (
-            $tahun !== ''
-            &&
-            $tahunAngkatan
-            !==
-            $tahun
-        ) {
+        if ($id === '') {
 
             continue;
         }
 
 
+        /*
+         * Detail API.
+         */
+        $responseDetail =
+            ambilDetailMahasiswa(
+                $id
+            );
+
+
+        $detail =
+            $responseDetail['ok']
+                ? $responseDetail['data']
+                : [];
+
+
+        /*
+         * Search data sebagai fallback.
+         */
+        $nama =
+            trim(
+                $detail['nama']
+                ??
+                $mhs['nama']
+                ??
+                '-'
+            );
+
+
+        $nim =
+            trim(
+                $detail['nim']
+                ??
+                $mhs['nim']
+                ??
+                '-'
+            );
+
+
+        $namaPt =
+            trim(
+                $detail['nama_pt']
+                ??
+                $mhs['nama_pt']
+                ??
+                PT_NAME
+            );
+
+
+        $namaProdi =
+            trim(
+                $detail['prodi']
+                ??
+                $mhs['nama_prodi']
+                ??
+                '-'
+            );
+
+
+        /*
+         * Tanggal Masuk ASLI dari detail.
+         */
+        $tanggalMasuk =
+            trim(
+                $detail['tanggal_masuk']
+                ??
+                ''
+            );
+
+
+        /*
+         * Tahun masuk dari tanggal_masuk.
+         */
+        $tahunMasuk =
+            tahunDariTanggalMasuk(
+                $tanggalMasuk
+            );
+
+
+        /*
+         * Jika suatu response PDDIKTI memakai
+         * field tahun_masuk secara langsung,
+         * kita dukung juga.
+         */
+        if (
+            $tahunMasuk === ''
+            &&
+            isset($detail['tahun_masuk'])
+        ) {
+
+            $tahunLangsung =
+                trim(
+                    (string)
+                    $detail['tahun_masuk']
+                );
+
+
+            if (
+                preg_match(
+                    '/^\d{4}$/',
+                    $tahunLangsung
+                )
+            ) {
+
+                $tahunMasuk =
+                    $tahunLangsung;
+            }
+        }
+
+
+        /*
+         * Jenjang:
+         *
+         * Prioritas:
+         * 1. katalog API prodi (D3/D4)
+         * 2. detail mahasiswa
+         */
+        $jenjang =
+            $mapJenjang[
+                normalisasi(
+                    $namaProdi
+                )
+            ]
+            ??
+            trim(
+                $detail['jenjang']
+                ??
+                '-'
+            );
+
+
         $hasil[] = [
 
             'id' =>
-                $mhs['id']
-                ??
-                '',
+                $id,
 
             'nama' =>
-                trim(
-                    $mhs['nama']
-                    ??
-                    '-'
-                ),
+                $nama,
 
             'nim' =>
                 $nim,
 
             'nama_pt' =>
+                $namaPt,
+
+            'kode_pt' =>
                 trim(
-                    $mhs['nama_pt']
+                    $detail['kode_pt']
+                    ??
+                    PT_CODE
+                ),
+
+            'kode_prodi' =>
+                trim(
+                    $detail['kode_prodi']
                     ??
                     ''
                 ),
@@ -611,8 +1153,41 @@ function cariMahasiswa(
             'nama_prodi' =>
                 $namaProdi,
 
-            'tahun_angkatan' =>
-                $tahunAngkatan
+            'jenjang' =>
+                $jenjang,
+
+            'jenis_kelamin' =>
+                trim(
+                    $detail['jenis_kelamin']
+                    ??
+                    ''
+                ),
+
+            'jenis_daftar' =>
+                trim(
+                    $detail['jenis_daftar']
+                    ??
+                    ''
+                ),
+
+            'status_saat_ini' =>
+                trim(
+                    $detail['status_saat_ini']
+                    ??
+                    ''
+                ),
+
+            'tanggal_masuk' =>
+                $tanggalMasuk,
+
+            'tahun_masuk' =>
+                $tahunMasuk,
+
+            /*
+             * Penanda apakah detail berhasil.
+             */
+            'detail_tersedia' =>
+                $responseDetail['ok']
         ];
     }
 
@@ -642,22 +1217,23 @@ try {
 
     if ($action === 'prodi') {
 
-        $data =
+        $items =
             ambilProgramStudi();
 
 
         responseJson(
+
             true,
 
             [
                 'items' =>
-                    $data,
+                    $items,
 
                 'jumlah' =>
-                    count($data)
+                    count($items)
             ],
 
-            'Program studi berhasil diambil dari API PDDIKTI.'
+            'Program Studi berhasil diambil dari API PDDIKTI.'
         );
     }
 
@@ -672,7 +1248,7 @@ try {
             trim(
                 $_GET['prodi']
                 ??
-                ''
+                'all'
             );
 
 
@@ -680,7 +1256,7 @@ try {
             trim(
                 $_GET['tahun']
                 ??
-                ''
+                'all'
             );
 
 
@@ -692,101 +1268,197 @@ try {
             );
 
 
-        /**
-         * Program Studi wajib dipilih.
-         */
         if ($prodi === '') {
 
-            responseJson(
-                false,
-                null,
-                'Program Studi belum dipilih.',
-                400
-            );
+            $prodi =
+                'all';
         }
 
 
-        /**
-         * Tahun wajib dipilih.
-         */
         if ($tahun === '') {
 
-            responseJson(
-                false,
-                null,
-                'Tahun Angkatan belum dipilih.',
-                400
-            );
+            $tahun =
+                'all';
         }
 
 
-        /**
-         * ====================================================
-         * KEYWORD PENCARIAN
-         *
-         * Jika ada nama/NIM:
-         * gunakan nama/NIM sebagai keyword.
-         *
-         * Jika kosong:
-         * gunakan:
-         *
-         * Program Studi + Politeknik Negeri Lhokseumawe
-         * ====================================================
-         */
+        /* ====================================================
+           KEYWORD SEARCH
+        ==================================================== */
 
         if ($q !== '') {
 
+            /*
+             * Nama/NIM merupakan keyword utama.
+             */
             $keyword =
                 $q;
 
-        } else {
+        } elseif (
+            $prodi !== 'all'
+        ) {
 
+            /*
+             * Program Studi tertentu.
+             */
             $keyword =
                 $prodi
                 .
                 ' '
                 .
                 PT_NAME;
+
+        } else {
+
+            /*
+             * Tampilan awal / semua prodi.
+             */
+            $keyword =
+                PT_NAME;
         }
 
 
-        /**
-         * Cari mahasiswa.
-         */
-        $items =
-            cariMahasiswa(
+        /* ====================================================
+           SEARCH
+        ==================================================== */
+
+        $dasar =
+            cariMahasiswaDasar(
                 $keyword,
-                $prodi,
-                $tahun
-            );
-
-
-        /**
-         * Jenjang diperoleh dari
-         * daftar prodi API PDDIKTI.
-         */
-        $jenjang =
-            cariJenjangProdi(
                 $prodi
             );
 
 
-        /**
-         * Tambahkan jenjang.
-         */
-        foreach (
-            $items
-            as
-            &$item
+        /* ====================================================
+           DETAIL
+        ==================================================== */
+
+        $items =
+            lengkapiMahasiswa(
+                $dasar
+            );
+
+
+        /* ====================================================
+           FILTER TAHUN DARI tanggal_masuk ASLI
+        ==================================================== */
+
+        if (
+            $tahun !== 'all'
+            &&
+            $tahun !== ''
         ) {
 
-            $item['jenjang'] =
-                $jenjang;
+            $items =
+                array_values(
+                    array_filter(
+                        $items,
+                        function ($item)
+                        use ($tahun) {
+
+                            return
+                                ($item['tahun_masuk'] ?? '')
+                                ===
+                                $tahun;
+                        }
+                    )
+                );
         }
 
 
-        unset($item);
+        /* ====================================================
+           DAFTAR TAHUN YANG TERSEDIA
+        ==================================================== */
 
+        $tahunTersedia =
+            [];
+
+
+        /*
+         * Penting:
+         * daftar tahun sebaiknya berasal dari data SEBELUM
+         * difilter tahun.
+         *
+         * Jadi kita proses lagi dari $dasar apabila
+         * filter tahun sedang aktif.
+         */
+        if (
+            $tahun !== 'all'
+            &&
+            $tahun !== ''
+        ) {
+
+            /*
+             * Detail kemungkinan sudah ada di cache sehingga
+             * tidak melakukan request berat lagi.
+             */
+            $semuaDetail =
+                lengkapiMahasiswa(
+                    $dasar
+                );
+
+        } else {
+
+            $semuaDetail =
+                $items;
+        }
+
+
+        foreach (
+            $semuaDetail
+            as
+            $item
+        ) {
+
+            $tahunItem =
+                trim(
+                    $item['tahun_masuk']
+                    ??
+                    ''
+                );
+
+
+            if ($tahunItem !== '') {
+
+                $tahunTersedia[] =
+                    $tahunItem;
+            }
+        }
+
+
+        $tahunTersedia =
+            array_values(
+                array_unique(
+                    $tahunTersedia
+                )
+            );
+
+
+        rsort(
+            $tahunTersedia,
+            SORT_NUMERIC
+        );
+
+
+        /* ====================================================
+           LABEL
+        ==================================================== */
+
+        $labelProdi =
+            $prodi === 'all'
+                ? 'Semua Program Studi'
+                : $prodi;
+
+
+        $labelTahun =
+            $tahun === 'all'
+                ? 'Semua Tahun'
+                : $tahun;
+
+
+        /* ====================================================
+           RESPONSE
+        ==================================================== */
 
         responseJson(
 
@@ -800,45 +1472,37 @@ try {
                     count($items),
 
                 'program_studi' =>
-                    $prodi,
+                    $labelProdi,
 
-                'jenjang' =>
-                    $jenjang,
+                'tahun' =>
+                    $labelTahun,
 
-                'tahun_angkatan' =>
-                    $tahun,
+                'tahun_tersedia' =>
+                    $tahunTersedia,
 
                 'keyword_api' =>
                     $keyword,
 
-                /**
-                 * Sangat penting.
-                 */
                 'hasil_lengkap' =>
-                    false,
-
-                'keterangan' =>
-                    'Jumlah merupakan hasil pencarian endpoint publik PDDIKTI dan bukan total populasi mahasiswa.'
+                    false
             ],
 
-            'Pencarian API PDDIKTI selesai.'
+            'Data mahasiswa berhasil diambil dari API PDDIKTI.'
         );
     }
 
 
-    /* ========================================================
-       ACTION TIDAK DIKENALI
-    ======================================================== */
-
     responseJson(
         false,
         null,
-        'Action API tidak dikenali.',
+        'Action tidak dikenali.',
         400
     );
 
 
-} catch (Throwable $e) {
+} catch (
+    Throwable $e
+) {
 
     responseJson(
         false,
