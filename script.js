@@ -1,201 +1,100 @@
 /**
  * ============================================================
- * SISTEM INFORMASI DATA MAHASISWA PNL
- * Sumber Data: API Publik PDDIKTI
+ * DATA MAHASISWA PNL
+ * API PUBLIK PDDIKTI
  *
- * FUNGSI:
- * 1. Mengambil daftar Program Studi PNL dari API.
- * 2. Menyediakan filter Tahun Angkatan.
- * 3. Melakukan pencarian mahasiswa melalui backend api.php.
- * 4. Memfilter hasil berdasarkan:
- *      - Program Studi
- *      - Tahun Angkatan
- *      - Nama / NIM (opsional)
- * 5. Menampilkan hasil API dalam tabel.
- * 6. Pagination 10 data per halaman.
- *
- * CATATAN:
- * Jumlah hasil merupakan hasil pencarian API PDDIKTI,
- * bukan jumlah keseluruhan/populasi mahasiswa.
+ * Tahun masuk berasal dari DETAIL mahasiswa PDDIKTI.
+ * TIDAK berasal dari NIM.
  * ============================================================
  */
 
 
 /* ============================================================
-   DATA GLOBAL
+   GLOBAL
 ============================================================ */
 
-/**
- * Seluruh data hasil pencarian API
- * yang akan ditampilkan.
- */
+let semuaMahasiswa = [];
+
 let dataTampil = [];
 
-
-/**
- * Halaman aktif pagination.
- */
 let currentPage = 1;
 
-
-/**
- * Jumlah data per halaman.
- */
 const perPage = 10;
 
-
-/**
- * Penanda ketika request sedang berjalan.
- * Mencegah klik tombol berkali-kali.
- */
 let sedangMemuat = false;
 
 
 /* ============================================================
-   DOM ELEMENT
+   DOM
 ============================================================ */
 
 const searchInput =
-    document.getElementById(
-        'searchInput'
-    );
-
+    document.getElementById('searchInput');
 
 const prodiFilter =
-    document.getElementById(
-        'prodiFilter'
-    );
-
+    document.getElementById('prodiFilter');
 
 const tahunFilter =
-    document.getElementById(
-        'tahunFilter'
-    );
-
+    document.getElementById('tahunFilter');
 
 const btnTerapkan =
-    document.getElementById(
-        'btnTerapkan'
-    );
-
+    document.getElementById('btnTerapkan');
 
 const btnReset =
-    document.getElementById(
-        'btnReset'
-    );
-
+    document.getElementById('btnReset');
 
 const loadingBox =
-    document.getElementById(
-        'loadingBox'
-    );
-
+    document.getElementById('loadingBox');
 
 const loadingText =
-    document.getElementById(
-        'loadingText'
-    );
-
-
-const tableSection =
-    document.getElementById(
-        'tableSection'
-    );
-
-
-const tableBody =
-    document.getElementById(
-        'studentTableBody'
-    );
-
-
-const resultInfo =
-    document.getElementById(
-        'resultInfo'
-    );
-
+    document.getElementById('loadingText');
 
 const messageBox =
-    document.getElementById(
-        'messageBox'
-    );
+    document.getElementById('messageBox');
 
+const tableSection =
+    document.getElementById('tableSection');
 
-const statTotal =
-    document.getElementById(
-        'statTotal'
-    );
+const tableBody =
+    document.getElementById('studentTableBody');
 
-
-const statProdi =
-    document.getElementById(
-        'statProdi'
-    );
-
-
-const statTahun =
-    document.getElementById(
-        'statTahun'
-    );
-
-
-const prevPage =
-    document.getElementById(
-        'prevPage'
-    );
-
-
-const nextPage =
-    document.getElementById(
-        'nextPage'
-    );
-
-
-const pageNumbers =
-    document.getElementById(
-        'pageNumbers'
-    );
-
+const resultInfo =
+    document.getElementById('resultInfo');
 
 const tableDescription =
-    document.getElementById(
-        'tableDescription'
-    );
+    document.getElementById('tableDescription');
+
+const statTotal =
+    document.getElementById('statTotal');
+
+const statProdi =
+    document.getElementById('statProdi');
+
+const statTahun =
+    document.getElementById('statTahun');
+
+const prevPage =
+    document.getElementById('prevPage');
+
+const nextPage =
+    document.getElementById('nextPage');
+
+const pageNumbers =
+    document.getElementById('pageNumbers');
 
 
 /* ============================================================
    ESCAPE HTML
 ============================================================ */
 
-/**
- * Mencegah data dari API langsung
- * dimasukkan sebagai HTML.
- */
 function escapeHtml(value) {
 
-    return String(
-        value ?? ''
-    )
-        .replace(
-            /&/g,
-            '&amp;'
-        )
-        .replace(
-            /</g,
-            '&lt;'
-        )
-        .replace(
-            />/g,
-            '&gt;'
-        )
-        .replace(
-            /"/g,
-            '&quot;'
-        )
-        .replace(
-            /'/g,
-            '&#039;'
-        );
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
 }
 
 
@@ -203,20 +102,9 @@ function escapeHtml(value) {
    FORMAT NAMA
 ============================================================ */
 
-/**
- * Contoh:
- *
- * TEKNOLOGI REKAYASA MULTIMEDIA
- *
- * menjadi:
- *
- * Teknologi Rekayasa Multimedia
- */
 function formatNama(text) {
 
-    return String(
-        text ?? ''
-    )
+    return String(text ?? '')
         .trim()
         .toLowerCase()
         .replace(
@@ -228,21 +116,91 @@ function formatNama(text) {
 
 
 /* ============================================================
+   LABEL
+============================================================ */
+
+function labelProdi(value) {
+
+    if (
+        value === ''
+        ||
+        value === 'all'
+    ) {
+
+        return 'Semua Program Studi';
+    }
+
+
+    return formatNama(value);
+}
+
+
+function labelTahun(value) {
+
+    if (
+        value === ''
+        ||
+        value === 'all'
+    ) {
+
+        return 'Semua Tahun';
+    }
+
+
+    return value;
+}
+
+
+/* ============================================================
+   RANDOM
+============================================================ */
+
+function acakArray(array) {
+
+    const hasil =
+        [...array];
+
+
+    for (
+        let i = hasil.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random()
+                *
+                (i + 1)
+            );
+
+
+        [
+            hasil[i],
+            hasil[j]
+        ] =
+        [
+            hasil[j],
+            hasil[i]
+        ];
+    }
+
+
+    return hasil;
+}
+
+
+/* ============================================================
    MESSAGE
 ============================================================ */
 
 function tampilPesan(
-    pesan,
+    text,
     type = 'error'
 ) {
 
-    if (!messageBox) {
-        return;
-    }
-
-
     messageBox.textContent =
-        pesan;
+        text;
 
 
     messageBox.className =
@@ -261,15 +219,7 @@ function tampilPesan(
 }
 
 
-/**
- * Menyembunyikan pesan.
- */
 function sembunyikanPesan() {
-
-    if (!messageBox) {
-        return;
-    }
-
 
     messageBox.classList.add(
         'hidden'
@@ -283,19 +233,11 @@ function sembunyikanPesan() {
 
 function tampilLoading(
     tampil,
-    pesan = 'Mengambil data dari PDDIKTI...'
+    text = 'Mengambil data dari PDDIKTI...'
 ) {
 
-    if (!loadingBox) {
-        return;
-    }
-
-
-    if (loadingText) {
-
-        loadingText.textContent =
-            pesan;
-    }
+    loadingText.textContent =
+        text;
 
 
     if (tampil) {
@@ -314,178 +256,45 @@ function tampilLoading(
 
 
 /* ============================================================
-   STATISTIK
-============================================================ */
-
-function resetStatistik() {
-
-    statTotal.textContent =
-        '-';
-
-
-    statProdi.textContent =
-        '-';
-
-
-    statTahun.textContent =
-        '-';
-}
-
-
-/* ============================================================
-   ISI FILTER TAHUN ANGKATAN
-============================================================ */
-
-function isiTahunAngkatan() {
-
-    /**
-     * Kosongkan dropdown.
-     */
-    tahunFilter.innerHTML =
-        `
-        <option value="">
-            -- Pilih Tahun Angkatan --
-        </option>
-        `;
-
-
-    /**
-     * Tahun saat ini dari komputer/browser.
-     */
-    const tahunSekarang =
-        new Date()
-            .getFullYear();
-
-
-    /**
-     * Buat pilihan tahun dari tahun sekarang
-     * sampai tahun 2000.
-     *
-     * Tahun ini hanya pilihan filter.
-     * Bukan data mahasiswa.
-     */
-    for (
-        let tahun = tahunSekarang;
-        tahun >= 2000;
-        tahun--
-    ) {
-
-        const option =
-            document.createElement(
-                'option'
-            );
-
-
-        option.value =
-            String(tahun);
-
-
-        option.textContent =
-            String(tahun);
-
-
-        tahunFilter.appendChild(
-            option
-        );
-    }
-}
-
-
-/* ============================================================
-   LOAD PROGRAM STUDI
+   PROGRAM STUDI
 ============================================================ */
 
 async function loadProgramStudi() {
 
-    sembunyikanPesan();
-
-
-    tampilLoading(
-        true,
-        'Mengambil Program Studi dari API PDDIKTI...'
-    );
-
-
-    /**
-     * Disable sementara.
-     */
-    prodiFilter.disabled =
-        true;
-
-
     prodiFilter.innerHTML =
         `
-        <option value="">
-            Memuat Program Studi...
+        <option value="all">
+            Semua Program Studi
         </option>
         `;
 
 
+    prodiFilter.disabled =
+        true;
+
+
     try {
 
-        /**
-         * Request ke backend kita.
-         */
         const response =
             await fetch(
-                'api.php?action=prodi',
+                'api.php?action=prodi&t='
+                +
+                Date.now(),
                 {
-                    method: 'GET',
                     cache: 'no-store'
                 }
             );
 
 
-        /**
-         * Ambil sebagai text lebih dahulu.
-         * Agar kalau PHP error, kita dapat melihat
-         * response yang sebenarnya di Console.
-         */
-        const responseText =
-            await response.text();
+        const json =
+            await response.json();
 
 
-        let json;
-
-
-        try {
-
-            json =
-                JSON.parse(
-                    responseText
-                );
-
-        } catch (parseError) {
-
-            console.error(
-                'Response Program Studi bukan JSON:',
-                responseText
-            );
-
-
-            throw new Error(
-                'Response server bukan JSON yang valid.'
-            );
-        }
-
-
-        /**
-         * HTTP error.
-         */
-        if (!response.ok) {
-
-            throw new Error(
-                json.message
-                ||
-                `HTTP ${response.status}`
-            );
-        }
-
-
-        /**
-         * API internal error.
-         */
-        if (!json.success) {
+        if (
+            !response.ok
+            ||
+            !json.success
+        ) {
 
             throw new Error(
                 json.message
@@ -495,13 +304,6 @@ async function loadProgramStudi() {
         }
 
 
-        /**
-         * Struktur dari api.php terbaru:
-         *
-         * data: {
-         *     items: [...]
-         * }
-         */
         const daftar =
             Array.isArray(
                 json.data?.items
@@ -510,41 +312,27 @@ async function loadProgramStudi() {
                 : [];
 
 
-        /**
-         * Reset dropdown.
-         */
-        prodiFilter.innerHTML =
-            `
-            <option value="">
-                -- Pilih Program Studi --
-            </option>
-            `;
-
-
-        /**
-         * Masukkan Program Studi.
-         */
         daftar.forEach(
             prodi => {
 
-                const namaProdi =
+                const nama =
                     String(
                         prodi.nama_prodi
-                        ?? ''
+                        ??
+                        ''
                     ).trim();
 
 
                 const jenjang =
                     String(
                         prodi.jenjang
-                        ?? ''
+                        ??
+                        ''
                     ).trim();
 
 
-                /**
-                 * Lewati jika nama kosong.
-                 */
-                if (namaProdi === '') {
+                if (nama === '') {
+
                     return;
                 }
 
@@ -555,43 +343,14 @@ async function loadProgramStudi() {
                     );
 
 
-                /**
-                 * Value harus mempertahankan
-                 * nama asli API karena nanti
-                 * dikirim kembali ke backend.
-                 */
                 option.value =
-                    namaProdi;
+                    nama;
 
 
-                /**
-                 * Tampilan dropdown.
-                 */
-                if (jenjang !== '') {
-
-                    option.textContent =
-                        `${jenjang} - ${formatNama(namaProdi)}`;
-
-                } else {
-
-                    option.textContent =
-                        formatNama(
-                            namaProdi
-                        );
-                }
-
-
-                /**
-                 * Simpan data tambahan.
-                 */
-                option.dataset.jenjang =
-                    jenjang;
-
-
-                option.dataset.id =
-                    prodi.id
-                    ??
-                    '';
+                option.textContent =
+                    jenjang !== ''
+                        ? `${jenjang} - ${formatNama(nama)}`
+                        : formatNama(nama);
 
 
                 prodiFilter.appendChild(
@@ -601,105 +360,151 @@ async function loadProgramStudi() {
         );
 
 
-        /**
-         * Aktifkan kembali dropdown.
-         */
-        prodiFilter.disabled =
-            false;
-
-
-        /**
-         * Tidak ada prodi.
-         */
-        if (
-            daftar.length === 0
-        ) {
-
-            tampilPesan(
-                'API PDDIKTI tidak mengembalikan Program Studi Politeknik Negeri Lhokseumawe.'
-            );
-
-            return false;
-        }
-
-
-        tampilPesan(
-            `${daftar.length} Program Studi ditemukan melalui API PDDIKTI.`,
-            'success'
-        );
-
-
-        return true;
-
-
     } catch (error) {
 
-        console.error(
-            'Gagal mengambil Program Studi:',
-            error
-        );
-
-
-        prodiFilter.innerHTML =
-            `
-            <option value="">
-                -- Program Studi Gagal Dimuat --
-            </option>
-            `;
-
-
-        prodiFilter.disabled =
-            true;
+        console.error(error);
 
 
         tampilPesan(
-            'Program Studi gagal dimuat: '
+            'Daftar Program Studi gagal dimuat: '
             +
             error.message
         );
 
 
-        return false;
-
-
     } finally {
 
-        tampilLoading(
-            false
-        );
+        prodiFilter.disabled =
+            false;
     }
 }
 
 
 /* ============================================================
-   CARI MAHASISWA
+   ISI TAHUN DARI DATA DETAIL PDDIKTI
 ============================================================ */
 
-async function cariMahasiswa() {
+function isiTahunDariData(
+    mahasiswa,
+    nilaiDipertahankan = 'all'
+) {
 
-    /**
-     * Jangan lakukan request baru
-     * jika request sebelumnya belum selesai.
+    const tahunSet =
+        new Set();
+
+
+    mahasiswa.forEach(
+        item => {
+
+            const tahun =
+                String(
+                    item.tahun_masuk
+                    ??
+                    ''
+                ).trim();
+
+
+            if (
+                /^\d{4}$/.test(tahun)
+            ) {
+
+                tahunSet.add(
+                    tahun
+                );
+            }
+        }
+    );
+
+
+    const daftarTahun =
+        Array.from(
+            tahunSet
+        ).sort(
+            (a, b) =>
+                Number(b)
+                -
+                Number(a)
+        );
+
+
+    tahunFilter.innerHTML =
+        `
+        <option value="all">
+            Semua Tahun
+        </option>
+        `;
+
+
+    daftarTahun.forEach(
+        tahun => {
+
+            const option =
+                document.createElement(
+                    'option'
+                );
+
+
+            option.value =
+                tahun;
+
+
+            option.textContent =
+                tahun;
+
+
+            tahunFilter.appendChild(
+                option
+            );
+        }
+    );
+
+
+    /*
+     * Pertahankan pilihan jika masih tersedia.
      */
+    const tersedia =
+        [
+            ...tahunFilter.options
+        ].some(
+            option =>
+                option.value
+                ===
+                nilaiDipertahankan
+        );
+
+
+    tahunFilter.value =
+        tersedia
+            ? nilaiDipertahankan
+            : 'all';
+}
+
+
+/* ============================================================
+   LOAD MAHASISWA DARI API
+============================================================ */
+
+async function loadMahasiswa(
+    randomkan = false
+) {
+
     if (sedangMemuat) {
+
         return;
     }
+
+
+    sedangMemuat =
+        true;
 
 
     sembunyikanPesan();
 
 
-    /**
-     * Ambil nilai filter.
-     */
     const prodi =
         prodiFilter.value
-            .trim();
-
-
-    const tahun =
-        tahunFilter.value
-            .trim();
+        ||
+        'all';
 
 
     const q =
@@ -707,106 +512,27 @@ async function cariMahasiswa() {
             .trim();
 
 
-    /**
-     * ========================================================
-     * VALIDASI PROGRAM STUDI
-     * ========================================================
-     */
-
-    if (prodi === '') {
-
-        tampilPesan(
-            'Silakan pilih Program Studi terlebih dahulu.'
-        );
-
-        prodiFilter.focus();
-
-        return;
-    }
+    const tahunSebelumnya =
+        tahunFilter.value
+        ||
+        'all';
 
 
-    /**
-     * ========================================================
-     * VALIDASI TAHUN
-     * ========================================================
-     */
-
-    if (tahun === '') {
-
-        tampilPesan(
-            'Silakan pilih Tahun Angkatan.'
-        );
-
-        tahunFilter.focus();
-
-        return;
-    }
-
-
-    /**
-     * Tandai sedang loading.
-     */
-    sedangMemuat =
-        true;
-
-
-    /**
-     * Disable tombol.
-     */
     btnTerapkan.disabled =
         true;
 
 
     btnTerapkan.textContent =
-        'Mencari...';
-
-
-    /**
-     * Reset data lama.
-     */
-    dataTampil = [];
-
-    currentPage = 1;
-
-
-    /**
-     * Sembunyikan tabel lama.
-     */
-    tableSection.classList.add(
-        'hidden'
-    );
-
-
-    /**
-     * Statistik sementara.
-     */
-    statTotal.textContent =
-        '-';
-
-
-    statProdi.textContent =
-        formatNama(
-            prodi
-        );
-
-
-    statTahun.textContent =
-        tahun;
+        'Memuat...';
 
 
     tampilLoading(
         true,
-        'Mencari data mahasiswa pada API PDDIKTI...'
+        'Mengambil pencarian dan detail mahasiswa dari PDDIKTI...'
     );
 
 
     try {
-
-        /**
-         * ====================================================
-         * QUERY PARAMETER
-         * ====================================================
-         */
 
         const params =
             new URLSearchParams();
@@ -824,15 +550,16 @@ async function cariMahasiswa() {
         );
 
 
+        /*
+         * Backend kita minta semua tahun dahulu.
+         * Tahun akan difilter setelah detail tersedia.
+         */
         params.set(
             'tahun',
-            tahun
+            'all'
         );
 
 
-        /**
-         * Nama / NIM opsional.
-         */
         if (q !== '') {
 
             params.set(
@@ -842,11 +569,11 @@ async function cariMahasiswa() {
         }
 
 
-        /**
-         * ====================================================
-         * REQUEST
-         * ====================================================
-         */
+        params.set(
+            't',
+            Date.now()
+        );
+
 
         const response =
             await fetch(
@@ -854,7 +581,6 @@ async function cariMahasiswa() {
                 +
                 params.toString(),
                 {
-                    method: 'GET',
                     cache: 'no-store'
                 }
             );
@@ -874,124 +600,86 @@ async function cariMahasiswa() {
                     responseText
                 );
 
-        } catch (parseError) {
+        } catch {
 
             console.error(
-                'Response mahasiswa bukan JSON:',
                 responseText
             );
 
 
             throw new Error(
-                'Response server bukan JSON yang valid.'
+                'Response server bukan JSON valid.'
             );
         }
 
 
-        /**
-         * HTTP error.
-         */
-        if (!response.ok) {
+        if (
+            !response.ok
+            ||
+            !json.success
+        ) {
 
             throw new Error(
                 json.message
                 ||
-                `HTTP ${response.status}`
+                'Data mahasiswa gagal dimuat.'
             );
         }
 
 
-        /**
-         * Internal API error.
-         */
-        if (!json.success) {
-
-            throw new Error(
-                json.message
-                ||
-                'Pencarian mahasiswa gagal.'
-            );
-        }
-
-
-        /**
-         * ====================================================
-         * HASIL
-         * ====================================================
-         */
-
-        const items =
-            json.data?.items;
-
-
-        dataTampil =
-            Array.isArray(items)
-                ? items
+        semuaMahasiswa =
+            Array.isArray(
+                json.data?.items
+            )
+                ? json.data.items
                 : [];
 
 
-        /**
-         * ====================================================
-         * STATISTIK
-         * ====================================================
+        /*
+         * Dropdown tahun sekarang benar-benar
+         * berasal dari tanggal_masuk detail PDDIKTI.
          */
-
-        statTotal.textContent =
-            dataTampil.length;
-
-
-        statProdi.textContent =
-            formatNama(
-                prodi
-            );
-
-
-        statTahun.textContent =
-            tahun;
-
-
-        /**
-         * ====================================================
-         * DESKRIPSI TABEL
-         * ====================================================
-         */
-
-        tableDescription.textContent =
-            `${formatNama(prodi)} - Angkatan ${tahun}`;
-
-
-        /**
-         * Tampilkan tabel.
-         */
-        tableSection.classList.remove(
-            'hidden'
+        isiTahunDariData(
+            semuaMahasiswa,
+            tahunSebelumnya
         );
 
 
-        /**
-         * Render.
+        /*
+         * Random hanya pada tampilan umum.
          */
-        renderTable();
+        if (
+            randomkan
+            &&
+            prodi === 'all'
+            &&
+            tahunFilter.value === 'all'
+            &&
+            q === ''
+        ) {
+
+            semuaMahasiswa =
+                acakArray(
+                    semuaMahasiswa
+                );
+        }
 
 
-        /**
-         * ====================================================
-         * MESSAGE
-         * ====================================================
-         */
+        terapkanFilterLokal();
+
 
         if (
-            dataTampil.length === 0
+            semuaMahasiswa.length === 0
         ) {
 
             tampilPesan(
-                'Belum ditemukan data mahasiswa yang sesuai pada hasil pencarian publik PDDIKTI.'
+                'Belum ditemukan data mahasiswa pada hasil pencarian publik PDDIKTI.'
             );
 
         } else {
 
             tampilPesan(
-                `${dataTampil.length} hasil API ditemukan. Jumlah ini bukan total keseluruhan mahasiswa Program Studi.`,
+                `${semuaMahasiswa.length} hasil API berhasil diproses. Tahun masuk berasal dari detail mahasiswa PDDIKTI.`,
                 'success'
             );
         }
@@ -999,29 +687,28 @@ async function cariMahasiswa() {
 
     } catch (error) {
 
-        console.error(
-            'Gagal mencari mahasiswa:',
-            error
+        console.error(error);
+
+
+        semuaMahasiswa =
+            [];
+
+
+        dataTampil =
+            [];
+
+
+        tableSection.classList.add(
+            'hidden'
         );
-
-
-        dataTampil = [];
 
 
         statTotal.textContent =
             '-';
 
 
-        /**
-         * Jangan tampilkan tabel error.
-         */
-        tableSection.classList.add(
-            'hidden'
-        );
-
-
         tampilPesan(
-            'Gagal mengambil data mahasiswa: '
+            'Gagal mengambil data: '
             +
             error.message
         );
@@ -1038,28 +725,127 @@ async function cariMahasiswa() {
         );
 
 
-        /**
-         * Aktifkan kembali tombol.
-         */
         btnTerapkan.disabled =
             false;
 
 
         btnTerapkan.textContent =
-            'Cari Data';
+            'Terapkan Filter';
     }
 }
 
 
 /* ============================================================
-   RENDER TABLE
+   FILTER LOKAL BERDASARKAN TAHUN
+============================================================ */
+
+function terapkanFilterLokal() {
+
+    const prodi =
+        prodiFilter.value
+        ||
+        'all';
+
+
+    const tahun =
+        tahunFilter.value
+        ||
+        'all';
+
+
+    dataTampil =
+        semuaMahasiswa.filter(
+            mahasiswa => {
+
+                /*
+                 * Backend sudah memfilter prodi,
+                 * tetapi kita validasi lagi.
+                 */
+                if (
+                    prodi !== 'all'
+                    &&
+                    String(
+                        mahasiswa.nama_prodi
+                        ??
+                        ''
+                    ).trim().toLowerCase()
+                    !==
+                    String(prodi)
+                        .trim()
+                        .toLowerCase()
+                ) {
+
+                    return false;
+                }
+
+
+                /*
+                 * Filter tahun masuk ASLI.
+                 */
+                if (
+                    tahun !== 'all'
+                    &&
+                    String(
+                        mahasiswa.tahun_masuk
+                        ??
+                        ''
+                    )
+                    !==
+                    tahun
+                ) {
+
+                    return false;
+                }
+
+
+                return true;
+            }
+        );
+
+
+    currentPage =
+        1;
+
+
+    statTotal.textContent =
+        dataTampil.length;
+
+
+    statProdi.textContent =
+        labelProdi(
+            prodi
+        );
+
+
+    statTahun.textContent =
+        labelTahun(
+            tahun
+        );
+
+
+    tableDescription.textContent =
+        labelProdi(prodi)
+        +
+        ' - '
+        +
+        labelTahun(tahun);
+
+
+    tableSection.classList.remove(
+        'hidden'
+    );
+
+
+    renderTable();
+}
+
+
+/* ============================================================
+   TABLE
 ============================================================ */
 
 function renderTable() {
 
-    /**
-     * Kosongkan tabel.
-     */
     tableBody.innerHTML =
         '';
 
@@ -1068,9 +854,6 @@ function renderTable() {
         dataTampil.length;
 
 
-    /**
-     * Jumlah halaman.
-     */
     const totalPages =
         Math.max(
             1,
@@ -1082,9 +865,6 @@ function renderTable() {
         );
 
 
-    /**
-     * Pastikan halaman aktif valid.
-     */
     if (
         currentPage >
         totalPages
@@ -1095,9 +875,6 @@ function renderTable() {
     }
 
 
-    /**
-     * Index data.
-     */
     const start =
         (
             currentPage - 1
@@ -1112,21 +889,12 @@ function renderTable() {
         perPage;
 
 
-    /**
-     * Data halaman aktif.
-     */
     const halaman =
         dataTampil.slice(
             start,
             end
         );
 
-
-    /**
-     * ========================================================
-     * DATA KOSONG
-     * ========================================================
-     */
 
     if (
         halaman.length === 0
@@ -1135,150 +903,144 @@ function renderTable() {
         tableBody.innerHTML =
             `
             <tr>
-
                 <td
-                    colspan="6"
+                    colspan="7"
                     style="
-                        text-align: center;
-                        padding: 35px;
-                        color: #6d7f8f;
+                        text-align:center;
+                        padding:35px;
                     "
                 >
-                    Belum ditemukan data yang sesuai
-                    pada hasil pencarian publik PDDIKTI.
+                    Tidak ada data yang ditemukan.
                 </td>
-
             </tr>
             `;
-
-    } else {
-
-
-        /**
-         * ====================================================
-         * DATA ADA
-         * ====================================================
-         */
-
-        halaman.forEach(
-            (
-                mahasiswa,
-                index
-            ) => {
-
-
-                const nomor =
-                    start
-                    +
-                    index
-                    +
-                    1;
-
-
-                const row =
-                    document.createElement(
-                        'tr'
-                    );
-
-
-                row.innerHTML =
-                    `
-
-                    <td>
-                        ${nomor}
-                    </td>
-
-
-                    <td>
-
-                        <span class="student-name">
-
-                            ${
-                                escapeHtml(
-                                    mahasiswa.nama
-                                    ??
-                                    '-'
-                                )
-                            }
-
-                        </span>
-
-                    </td>
-
-
-                    <td>
-
-                        <span class="nim">
-
-                            ${
-                                escapeHtml(
-                                    mahasiswa.nim
-                                    ??
-                                    '-'
-                                )
-                            }
-
-                        </span>
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            escapeHtml(
-                                formatNama(
-                                    mahasiswa.nama_prodi
-                                    ??
-                                    '-'
-                                )
-                            )
-                        }
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            escapeHtml(
-                                mahasiswa.jenjang
-                                ??
-                                '-'
-                            )
-                        }
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            escapeHtml(
-                                mahasiswa.tahun_angkatan
-                                ??
-                                '-'
-                            )
-                        }
-
-                    </td>
-
-                    `;
-
-
-                tableBody.appendChild(
-                    row
-                );
-            }
-        );
     }
 
 
-    /**
-     * ========================================================
-     * INFORMASI JUMLAH
-     * ========================================================
-     */
+    halaman.forEach(
+        (
+            mahasiswa,
+            index
+        ) => {
+
+            const nomor =
+                start
+                +
+                index
+                +
+                1;
+
+
+            const row =
+                document.createElement(
+                    'tr'
+                );
+
+
+            row.innerHTML =
+                `
+
+                <td>
+                    ${nomor}
+                </td>
+
+
+                <td>
+
+                    <span class="student-name">
+
+                        ${
+                            escapeHtml(
+                                mahasiswa.nama
+                                ||
+                                '-'
+                            )
+                        }
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span class="nim">
+
+                        ${
+                            escapeHtml(
+                                mahasiswa.nim
+                                ||
+                                '-'
+                            )
+                        }
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        escapeHtml(
+                            formatNama(
+                                mahasiswa.nama_prodi
+                                ||
+                                '-'
+                            )
+                        )
+                    }
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        escapeHtml(
+                            mahasiswa.jenjang
+                            ||
+                            '-'
+                        )
+                    }
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        escapeHtml(
+                            mahasiswa.tahun_masuk
+                            ||
+                            '-'
+                        )
+                    }
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        escapeHtml(
+                            mahasiswa.status_saat_ini
+                            ||
+                            '-'
+                        )
+                    }
+
+                </td>
+
+                `;
+
+
+            tableBody.appendChild(
+                row
+            );
+        }
+    );
+
 
     if (total === 0) {
 
@@ -1303,9 +1065,6 @@ function renderTable() {
     }
 
 
-    /**
-     * Pagination.
-     */
     renderPagination(
         totalPages
     );
@@ -1320,30 +1079,18 @@ function renderPagination(
     totalPages
 ) {
 
-    /**
-     * Kosongkan nomor halaman.
-     */
     pageNumbers.innerHTML =
         '';
 
 
-    /**
-     * Previous.
-     */
     prevPage.disabled =
         currentPage <= 1;
 
 
-    /**
-     * Next.
-     */
     nextPage.disabled =
         currentPage >= totalPages;
 
 
-    /**
-     * Maksimal 5 nomor halaman.
-     */
     let startPage =
         Math.max(
             1,
@@ -1358,11 +1105,6 @@ function renderPagination(
         );
 
 
-    /**
-     * Kalau mendekati akhir,
-     * geser kembali supaya tetap
-     * menampilkan maksimal 5 angka.
-     */
     if (
         endPage - startPage < 4
     ) {
@@ -1375,9 +1117,6 @@ function renderPagination(
     }
 
 
-    /**
-     * Buat tombol.
-     */
     for (
         let page = startPage;
         page <= endPage;
@@ -1394,6 +1133,10 @@ function renderPagination(
             'button';
 
 
+        button.textContent =
+            page;
+
+
         button.className =
             'page-number'
             +
@@ -1402,10 +1145,6 @@ function renderPagination(
                     ? ' active'
                     : ''
             );
-
-
-        button.textContent =
-            page;
 
 
         button.addEventListener(
@@ -1417,17 +1156,6 @@ function renderPagination(
 
 
                 renderTable();
-
-
-                /**
-                 * Scroll kembali ke tabel.
-                 */
-                tableSection.scrollIntoView(
-                    {
-                        behavior: 'smooth',
-                        block: 'start'
-                    }
-                );
             }
         );
 
@@ -1440,98 +1168,67 @@ function renderPagination(
 
 
 /* ============================================================
-   RESET APLIKASI
+   PROGRAM STUDI BERUBAH
 ============================================================ */
 
-function resetAplikasi() {
+prodiFilter.addEventListener(
+    'change',
+    async () => {
 
-    /**
-     * Reset data.
-     */
-    dataTampil = [];
-
-    currentPage = 1;
-
-
-    /**
-     * Reset input.
-     */
-    searchInput.value =
-        '';
-
-
-    prodiFilter.value =
-        '';
+        /*
+         * Set kembali Semua Tahun karena dataset
+         * Program Studi akan berubah.
+         */
+        tahunFilter.innerHTML =
+            `
+            <option value="all">
+                Semua Tahun
+            </option>
+            `;
 
 
-    tahunFilter.value =
-        '';
+        tahunFilter.value =
+            'all';
 
 
-    /**
-     * Reset statistik.
-     */
-    resetStatistik();
-
-
-    /**
-     * Reset tabel.
-     */
-    tableBody.innerHTML =
-        '';
-
-
-    tableSection.classList.add(
-        'hidden'
-    );
-
-
-    /**
-     * Reset message.
-     */
-    sembunyikanPesan();
-
-
-    tampilPesan(
-        'Silakan pilih Program Studi dan Tahun Angkatan untuk melakukan pencarian.',
-        'success'
-    );
-}
+        await loadMahasiswa();
+    }
+);
 
 
 /* ============================================================
-   EVENT: CARI DATA
+   TAHUN BERUBAH
+============================================================ */
+
+tahunFilter.addEventListener(
+    'change',
+    () => {
+
+        terapkanFilterLokal();
+    }
+);
+
+
+/* ============================================================
+   TOMBOL FILTER
 ============================================================ */
 
 btnTerapkan.addEventListener(
     'click',
-    () => {
+    async () => {
 
-        cariMahasiswa();
+        await loadMahasiswa();
     }
 );
 
 
 /* ============================================================
-   EVENT: RESET
-============================================================ */
-
-btnReset.addEventListener(
-    'click',
-    () => {
-
-        resetAplikasi();
-    }
-);
-
-
-/* ============================================================
-   EVENT: ENTER PADA SEARCH
+   ENTER NAMA / NIM
 ============================================================ */
 
 searchInput.addEventListener(
     'keydown',
-    event => {
+    async event => {
 
         if (
             event.key === 'Enter'
@@ -1540,98 +1237,49 @@ searchInput.addEventListener(
             event.preventDefault();
 
 
-            cariMahasiswa();
+            await loadMahasiswa();
         }
     }
 );
 
 
 /* ============================================================
-   EVENT: PROGRAM STUDI BERUBAH
+   RESET
 ============================================================ */
 
-prodiFilter.addEventListener(
-    'change',
-    () => {
+btnReset.addEventListener(
+    'click',
+    async () => {
 
-        /**
-         * Jangan langsung request API.
-         *
-         * Hanya ubah tampilan statistik.
-         */
-        const prodi =
-            prodiFilter.value;
+        searchInput.value =
+            '';
 
 
-        if (prodi !== '') {
-
-            statProdi.textContent =
-                formatNama(
-                    prodi
-                );
-
-        } else {
-
-            statProdi.textContent =
-                '-';
-        }
+        prodiFilter.value =
+            'all';
 
 
-        /**
-         * Hasil lama disembunyikan
-         * karena filter sudah berubah.
-         */
-        statTotal.textContent =
-            '-';
+        tahunFilter.innerHTML =
+            `
+            <option value="all">
+                Semua Tahun
+            </option>
+            `;
 
 
-        tableSection.classList.add(
-            'hidden'
+        tahunFilter.value =
+            'all';
+
+
+        await loadMahasiswa(
+            true
         );
     }
 );
 
 
 /* ============================================================
-   EVENT: TAHUN BERUBAH
-============================================================ */
-
-tahunFilter.addEventListener(
-    'change',
-    () => {
-
-        const tahun =
-            tahunFilter.value;
-
-
-        if (tahun !== '') {
-
-            statTahun.textContent =
-                tahun;
-
-        } else {
-
-            statTahun.textContent =
-                '-';
-        }
-
-
-        /**
-         * Hasil lama tidak lagi mewakili filter.
-         */
-        statTotal.textContent =
-            '-';
-
-
-        tableSection.classList.add(
-            'hidden'
-        );
-    }
-);
-
-
-/* ============================================================
-   EVENT: PREVIOUS PAGE
+   PREVIOUS
 ============================================================ */
 
 prevPage.addEventListener(
@@ -1646,21 +1294,13 @@ prevPage.addEventListener(
 
 
             renderTable();
-
-
-            tableSection.scrollIntoView(
-                {
-                    behavior: 'smooth',
-                    block: 'start'
-                }
-            );
         }
     }
 );
 
 
 /* ============================================================
-   EVENT: NEXT PAGE
+   NEXT
 ============================================================ */
 
 nextPage.addEventListener(
@@ -1676,75 +1316,65 @@ nextPage.addEventListener(
 
 
         if (
-            currentPage
-            <
-            totalPages
+            currentPage < totalPages
         ) {
 
             currentPage++;
 
 
             renderTable();
-
-
-            tableSection.scrollIntoView(
-                {
-                    behavior: 'smooth',
-                    block: 'start'
-                }
-            );
         }
     }
 );
 
 
 /* ============================================================
-   INITIALIZATION
+   INIT
 ============================================================ */
 
 async function init() {
 
-    /**
-     * Kondisi awal.
+    statTotal.textContent =
+        '-';
+
+
+    statProdi.textContent =
+        'Semua Program Studi';
+
+
+    statTahun.textContent =
+        'Semua Tahun';
+
+
+    tahunFilter.innerHTML =
+        `
+        <option value="all">
+            Semua Tahun
+        </option>
+        `;
+
+
+    /*
+     * 1. Ambil Program Studi.
      */
-    resetStatistik();
+    await loadProgramStudi();
 
 
-    tableSection.classList.add(
-        'hidden'
+    prodiFilter.value =
+        'all';
+
+
+    /*
+     * 2. Langsung tampilkan mahasiswa.
+     */
+    await loadMahasiswa(
+        true
     );
-
-
-    /**
-     * Isi dropdown Tahun Angkatan.
-     */
-    isiTahunAngkatan();
-
-
-    /**
-     * Ambil Program Studi
-     * langsung dari API PDDIKTI.
-     */
-    const berhasil =
-        await loadProgramStudi();
-
-
-    /**
-     * Jika prodi berhasil dimuat,
-     * tampilkan petunjuk.
-     */
-    if (berhasil) {
-
-        tampilPesan(
-            'Silakan pilih Program Studi dan Tahun Angkatan untuk melakukan pencarian.',
-            'success'
-        );
-    }
 }
 
 
 /* ============================================================
-   JALANKAN APLIKASI
+   START
 ============================================================ */
 
 init();
