@@ -1,4 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "regions": [
+    "sin1"
+  ],
+
   "builds": [
     {
       "src": "*.php",
@@ -13,6 +19,7 @@
       "use": "@vercel/static"
     }
   ],
+
   "routes": [
     {
       "src": "/",
