@@ -22,7 +22,7 @@ require_once __DIR__ . '/config.php';
 
     <link
         rel="stylesheet"
-        href="style.css"
+        href="style.css?v=6"
     >
 
 </head>
@@ -30,10 +30,6 @@ require_once __DIR__ . '/config.php';
 
 <body>
 
-
-<!-- ============================================================
-     HEADER
-============================================================ -->
 
 <header class="header">
 
@@ -78,10 +74,6 @@ require_once __DIR__ . '/config.php';
 
 
 
-<!-- ============================================================
-     HERO
-============================================================ -->
-
 <section class="hero">
 
     <div class="hero-inner">
@@ -92,9 +84,8 @@ require_once __DIR__ . '/config.php';
         </h2>
 
         <p>
-            Pencarian data mahasiswa berdasarkan
-            Program Studi dan Tahun Angkatan
-            melalui API PDDIKTI.
+            Pencarian dan pemfilteran data mahasiswa
+            berdasarkan Program Studi dan Tahun Masuk.
         </p>
 
     </div>
@@ -102,10 +93,6 @@ require_once __DIR__ . '/config.php';
 </section>
 
 
-
-<!-- ============================================================
-     MAIN
-============================================================ -->
 
 <main class="container">
 
@@ -124,18 +111,15 @@ require_once __DIR__ . '/config.php';
             </h3>
 
             <p>
-                Pilih Program Studi dan Tahun Angkatan.
-                Nama atau NIM bersifat opsional.
+                Data ditampilkan secara otomatis.
+                Gunakan filter untuk mempersempit hasil.
             </p>
 
         </div>
 
 
-
         <div class="filter-grid">
 
-
-            <!-- NAMA / NIM -->
 
             <div class="form-group">
 
@@ -147,13 +131,12 @@ require_once __DIR__ . '/config.php';
                     type="text"
                     id="searchInput"
                     placeholder="Opsional: cari nama atau NIM"
+                    autocomplete="off"
                 >
 
             </div>
 
 
-
-            <!-- PROGRAM STUDI -->
 
             <div class="form-group">
 
@@ -163,8 +146,8 @@ require_once __DIR__ . '/config.php';
 
                 <select id="prodiFilter">
 
-                    <option value="">
-                        Memuat Program Studi...
+                    <option value="all">
+                        Semua Program Studi
                     </option>
 
                 </select>
@@ -173,18 +156,16 @@ require_once __DIR__ . '/config.php';
 
 
 
-            <!-- TAHUN -->
-
             <div class="form-group">
 
                 <label for="tahunFilter">
-                    Tahun Angkatan
+                    Tahun Masuk
                 </label>
 
                 <select id="tahunFilter">
 
-                    <option value="">
-                        -- Pilih Tahun Angkatan --
+                    <option value="all">
+                        Semua Tahun
                     </option>
 
                 </select>
@@ -195,21 +176,20 @@ require_once __DIR__ . '/config.php';
         </div>
 
 
-
         <div class="filter-actions">
 
             <button
-                type="button"
                 id="btnTerapkan"
+                type="button"
                 class="btn btn-primary"
             >
-                Cari Data
+                Terapkan Filter
             </button>
 
 
             <button
-                type="button"
                 id="btnReset"
+                type="button"
                 class="btn btn-secondary"
             >
                 Reset
@@ -254,7 +234,7 @@ require_once __DIR__ . '/config.php';
                 id="statProdi"
                 class="stat-value"
             >
-                -
+                Semua Program Studi
             </strong>
 
         </div>
@@ -263,14 +243,14 @@ require_once __DIR__ . '/config.php';
         <div class="stat-card">
 
             <span class="stat-label">
-                Tahun Angkatan
+                Tahun Masuk
             </span>
 
             <strong
                 id="statTahun"
                 class="stat-value"
             >
-                -
+                Semua Tahun
             </strong>
 
         </div>
@@ -280,20 +260,12 @@ require_once __DIR__ . '/config.php';
 
 
 
-    <!-- ========================================================
-         MESSAGE
-    ======================================================== -->
-
     <div
         id="messageBox"
         class="message hidden"
     ></div>
 
 
-
-    <!-- ========================================================
-         LOADING
-    ======================================================== -->
 
     <div
         id="loadingBox"
@@ -303,11 +275,12 @@ require_once __DIR__ . '/config.php';
         <div class="spinner"></div>
 
         <p id="loadingText">
-            Mengambil data dari PDDIKTI...
+            Mengambil data mahasiswa dari PDDIKTI...
         </p>
 
         <small>
-            Data diperoleh dari endpoint pencarian publik PDDIKTI.
+            Detail mahasiswa sedang diproses.
+            Proses pertama dapat memerlukan waktu.
         </small>
 
     </div>
@@ -329,18 +302,18 @@ require_once __DIR__ . '/config.php';
             <div>
 
                 <h3>
-                    Hasil Pencarian Mahasiswa
+                    Data Mahasiswa
                 </h3>
 
                 <p id="tableDescription">
-                    Hasil pencarian API PDDIKTI
+                    Semua Program Studi - Semua Tahun
                 </p>
 
             </div>
 
 
             <div id="resultInfo">
-                0 hasil
+                0 hasil API
             </div>
 
         </div>
@@ -355,29 +328,19 @@ require_once __DIR__ . '/config.php';
 
                     <tr>
 
-                        <th>
-                            No
-                        </th>
+                        <th>No</th>
 
-                        <th>
-                            Nama
-                        </th>
+                        <th>Nama</th>
 
-                        <th>
-                            NIM
-                        </th>
+                        <th>NIM</th>
 
-                        <th>
-                            Program Studi
-                        </th>
+                        <th>Program Studi</th>
 
-                        <th>
-                            Jenjang
-                        </th>
+                        <th>Jenjang</th>
 
-                        <th>
-                            Tahun Angkatan
-                        </th>
+                        <th>Tahun Masuk</th>
+
+                        <th>Status</th>
 
                     </tr>
 
@@ -393,8 +356,6 @@ require_once __DIR__ . '/config.php';
         </div>
 
 
-
-        <!-- PAGINATION -->
 
         <div class="pagination">
 
@@ -427,27 +388,24 @@ require_once __DIR__ . '/config.php';
 
 
 
-    <!-- ========================================================
-         CATATAN METODOLOGI
-    ======================================================== -->
-
     <section class="note">
 
         <strong>
             Catatan:
         </strong>
 
-        Data mahasiswa dan Program Studi diperoleh
-        melalui endpoint publik yang digunakan PDDIKTI.
+        Nama, NIM, Program Studi, Tahun Masuk,
+        Jenjang, dan Status mahasiswa diperoleh
+        melalui API publik PDDIKTI.
 
-        Jumlah hasil pada aplikasi adalah
-        <strong>jumlah hasil pencarian API</strong>,
-        bukan jumlah keseluruhan mahasiswa
-        pada Program Studi tersebut.
+        Tahun Masuk berasal dari field
+        <strong>tanggal_masuk</strong>
+        pada detail mahasiswa dan tidak ditentukan
+        dari pola NIM.
 
-        Tahun Angkatan ditentukan dari
-        empat digit awal NIM pada hasil API,
-        bukan dari field tanggal masuk.
+        Jumlah hasil merupakan jumlah data yang
+        dikembalikan oleh pencarian API dan tidak
+        merepresentasikan seluruh populasi mahasiswa PNL.
 
     </section>
 
@@ -455,10 +413,6 @@ require_once __DIR__ . '/config.php';
 </main>
 
 
-
-<!-- ============================================================
-     FOOTER
-============================================================ -->
 
 <footer>
 
@@ -478,7 +432,7 @@ require_once __DIR__ . '/config.php';
 
 
 
-<script src="script.js"></script>
+<script src="script.js?v=6"></script>
 
 
 </body>
