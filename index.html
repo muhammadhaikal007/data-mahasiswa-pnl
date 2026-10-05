@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mahasiswa PNL</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Tambahan style dasar agar rapi jika style.css asli ada yang hilang */
+        body { font-family: Arial, sans-serif; background-color: #f4f7f9; margin: 0; padding: 0; }
+        .header { background-color: #005690; color: white; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-reset { background: #e0e0e0; color: #333; }
+        .result-box { margin-top: 20px; padding: 15px; background: #e9f7ef; border-left: 4px solid #28a745; display: none; }
+        .error-box { margin-top: 20px; padding: 15px; background: #fdeaea; border-left: 4px solid #dc3545; display: none; color: #dc3545; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Data Mahasiswa Politeknik Negeri Lhokseumawe</h1>
+        <p>Pencarian dan pemfilteran data mahasiswa berdasarkan Program Studi (Menggunakan Client-Side Fetching)</p>
+    </div>
+
+    <div class="container">
+        <h3>Filter Data Mahasiswa</h3>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>Nama / NIM</label>
+                <input type="text" id="inputKeyword" placeholder="Opsional: cari nama atau NIM">
+            </div>
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label>Program Studi</label>
+                <select id="selectProdi">
+                    <option value="all">Semua Program Studi</option>
+                    <!-- Prodi akan dimuat menggunakan JS -->
+                </select>
+            </div>
+        </div>
+        <button class="btn" id="btnCari">Terapkan Filter</button>
+        <button class="btn btn-reset" id="btnReset">Reset</button>
+
+        <div id="loading" style="display: none; margin-top: 15px; text-align: center; color: #005690;">
+            ⏳ Mengambil data dari PDDIKTI...
+        </div>
+
+        <div id="errorBox" class="error-box"></div>
+        
+        <div id="resultBox" class="result-box">
+            Ditemukan <strong id="jumlahData">0</strong> mahasiswa.
+        </div>
+
+        <table id="tableMahasiswa" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nama</th>
+                    <th>NIM</th>
+                    <th>Program Studi</th>
+                    <th>Perguruan Tinggi</th>
+                </tr>
+            </thead>
+            <tbody id="bodyMahasiswa"></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
