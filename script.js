@@ -1,6 +1,6 @@
 const API_BASE = "https://api-pddikti.kemdiktisaintek.go.id";
 const PT_NAME = "Politeknik Negeri Lhokseumawe";
-const CORS_PROXY = "https://corsproxy.io/?";
+const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
 // DOM Elements
 const selectProdi = document.getElementById('selectProdi');
