@@ -125,7 +125,7 @@ function apiGet(string $url): array
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_CONNECTTIMEOUT => 15, // Waktu diperlama untuk proxy
+            CURLOPT_CONNECTTIMEOUT => 15,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_ENCODING => '',
             CURLOPT_USERAGENT => getUserAgent(),
@@ -133,8 +133,8 @@ function apiGet(string $url): array
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
             
-            // Konfigurasi Proxy
-            CURLOPT_PROXY => '103.144.208.178:1088',
+            // Konfigurasi Proxy Baru
+            CURLOPT_PROXY => '43.252.238.238:4153',
             CURLOPT_HTTPPROXYTUNNEL => true
         ]
     );
@@ -211,7 +211,7 @@ function apiPostJson(
             CURLOPT_POSTFIELDS => $payloadJson,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_CONNECTTIMEOUT => 15, // Waktu diperlama untuk proxy
+            CURLOPT_CONNECTTIMEOUT => 15,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_ENCODING => '',
             CURLOPT_USERAGENT => getUserAgent(),
@@ -219,8 +219,8 @@ function apiPostJson(
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => false,
             
-            // Konfigurasi Proxy
-            CURLOPT_PROXY => '103.144.208.178:1088',
+            // Konfigurasi Proxy Baru
+            CURLOPT_PROXY => '43.252.238.238:4153',
             CURLOPT_HTTPPROXYTUNNEL => true
         ]
     );
