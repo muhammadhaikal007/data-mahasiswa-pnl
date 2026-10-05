@@ -1,135 +1,217 @@
-// Konfigurasi API
-const KAMPUS = "Politeknik Negeri Lhokseumawe";
-const PDDIKTI_URL = "https://api-pddikti.kemdiktisaintek.go.id/pencarian/enc/all/";
-// Menggunakan CORS Proxy publik untuk membypass blokir browser
+const API_BASE = "https://api-pddikti.kemdiktisaintek.go.id";
+const PT_NAME = "Politeknik Negeri Lhokseumawe";
 const CORS_PROXY = "https://corsproxy.io/?";
 
+// DOM Elements
+const selectProdi = document.getElementById('selectProdi');
+const selectTahun = document.getElementById('selectTahun');
+const inputKeyword = document.getElementById('inputKeyword');
 const btnCari = document.getElementById('btnCari');
 const btnReset = document.getElementById('btnReset');
-const inputKeyword = document.getElementById('inputKeyword');
-const selectProdi = document.getElementById('selectProdi');
-const loading = document.getElementById('loading');
+const infoJumlah = document.getElementById('infoJumlah');
+const infoProdi = document.getElementById('infoProdi');
+const infoTahun = document.getElementById('infoTahun');
+const loadingBox = document.getElementById('loadingBox');
 const errorBox = document.getElementById('errorBox');
-const resultBox = document.getElementById('resultBox');
-const tableMahasiswa = document.getElementById('tableMahasiswa');
-const bodyMahasiswa = document.getElementById('bodyMahasiswa');
-const jumlahData = document.getElementById('jumlahData');
+const tableContainer = document.getElementById('tableContainer');
+const tableBody = document.getElementById('tableBody');
 
-// Fungsi utama mengambil data
-async function fetchData(keyword) {
-    try {
-        const url = CORS_PROXY + encodeURIComponent(PDDIKTI_URL + keyword);
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
+// Data state
+let allMahasiswaData = []; 
+let mapJenjangProdi = {};
 
-        if (!response.ok) throw new Error("Gagal terhubung ke API atau Proxy mati.");
-        
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        throw error;
+// Fungsi fetch menggunakan Proxy
+async function fetchAPI(endpoint, method = 'GET', body = null) {
+    const url = CORS_PROXY + encodeURIComponent(API_BASE + endpoint);
+    const options = {
+        method: method,
+        headers: { 'Accept': 'application/json' }
+    };
+    if (method === 'POST' && body) {
+        options.headers['Content-Type'] = 'application/json';
+        options.body = JSON.stringify(body);
     }
+    
+    const response = await fetch(url, options);
+    if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+    return await response.json();
+}
+
+// Inisialisasi: Muat Program Studi
+async function init() {
+    try {
+        const res = await fetchAPI('/pencarian/enc/all/' + encodeURIComponent(PT_NAME));
+        if (res.status === 'success' && res.data.prodi) {
+            let prodiList = res.data.prodi.filter(p => p.pt.toLowerCase().includes("lhokseumawe"));
+            
+            // Urutkan abjad
+            prodiList.sort((a, b) => a.nama.localeCompare(b.nama));
+            
+            prodiList.forEach(p => {
+                mapJenjangProdi[p.nama.toLowerCase()] = p.jenjang;
+                let option = document.createElement('option');
+                option.value = p.nama;
+                option.textContent = `${p.jenjang} - ${p.nama}`;
+                selectProdi.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error("Gagal memuat prodi:", error);
+    }
+}
+
+// Fungsi Mengambil Detail Mahasiswa
+async function lengkapiDetail(mhsDasar) {
+    // Ambil detail serentak menggunakan Promise.all agar lebih cepat
+    const detailPromises = mhsDasar.map(async (mhs) => {
+        let tahunMasuk = "";
+        let status = "-";
+        let jenjang = mapJenjangProdi[mhs.nama_prodi.toLowerCase()] || "-";
+        
+        try {
+            // Ambil detail berdasarkan ID
+            const resDetail = await fetchAPI('/detail/mhs', 'POST', { id: mhs.id });
+            if (resDetail.status === 'success' && resDetail.data) {
+                const data = resDetail.data;
+                
+                // Ekstrak Tahun dari Tanggal (contoh format API PDDIKTI: 2023-08-15)
+                if (data.tanggal_masuk) {
+                    tahunMasuk = data.tanggal_masuk.substring(0, 4);
+                } else if (data.tahun_masuk) {
+                    tahunMasuk = data.tahun_masuk.toString();
+                }
+                
+                status = data.status_saat_ini || "-";
+                jenjang = data.jenjang || jenjang;
+            }
+        } catch (e) {
+            console.error("Gagal detail untuk:", mhs.nama);
+        }
+
+        return {
+            ...mhs,
+            tahun_masuk: tahunMasuk,
+            status_saat_ini: status,
+            jenjang: jenjang
+        };
+    });
+
+    return await Promise.all(detailPromises);
 }
 
 // Eksekusi Pencarian
 btnCari.addEventListener('click', async () => {
     let keyword = inputKeyword.value.trim();
     let prodi = selectProdi.value;
+    let filterTahun = selectTahun.value;
 
-    // Susun keyword pencarian
-    let query = KAMPUS;
+    // Logika Keyword seperti aslinya
+    let searchQuery = PT_NAME;
     if (keyword !== "") {
-        query = keyword; // Jika spesifik cari NIM/Nama
+        searchQuery = keyword;
     } else if (prodi !== "all") {
-        query = prodi + " " + KAMPUS; // Jika cari berdasarkan prodi
+        searchQuery = `${prodi} ${PT_NAME}`;
     }
 
     // Reset UI
     errorBox.style.display = 'none';
-    resultBox.style.display = 'none';
-    tableMahasiswa.style.display = 'none';
-    bodyMahasiswa.innerHTML = '';
-    loading.style.display = 'block';
+    tableContainer.style.display = 'none';
+    tableBody.innerHTML = '';
+    loadingBox.style.display = 'block';
     btnCari.disabled = true;
 
     try {
-        const response = await fetchData(query);
-        
-        if (response.status !== "success") {
-            throw new Error("Data PDDIKTI tidak ditemukan.");
-        }
+        // 1. Pencarian Dasar
+        const resDasar = await fetchAPI('/pencarian/enc/all/' + encodeURIComponent(searchQuery));
+        if (resDasar.status !== 'success') throw new Error("Gagal mengambil data pencarian.");
 
-        let mahasiswa = response.data.mahasiswa || [];
+        let mhsDasar = resDasar.data.mahasiswa || [];
 
-        // Filter manual untuk memastikan hanya mahasiswa PNL dan Prodi yang sesuai
-        let hasilFilter = mahasiswa.filter(m => {
-            let isKampusBenar = m.nama_pt.toLowerCase().includes("lhokseumawe");
-            let isProdiBenar = prodi === "all" || m.nama_prodi === prodi;
-            return isKampusBenar && isProdiBenar;
+        // Filter kampus dan prodi (berjaga-jaga jika API mengembalikan data kampus lain)
+        mhsDasar = mhsDasar.filter(m => {
+            let isKampus = m.nama_pt.toLowerCase().includes("lhokseumawe");
+            let isProdi = prodi === "all" || m.nama_prodi.toLowerCase() === prodi.toLowerCase();
+            return isKampus && isProdi;
         });
 
-        tampilkanData(hasilFilter);
+        // 2. Lengkapi Data dengan POST Detail
+        allMahasiswaData = await lengkapiDetail(mhsDasar);
+
+        // 3. Perbarui Dropdown Tahun Masuk (Ekstrak tahun unik dari hasil)
+        updateDropdownTahun(allMahasiswaData, filterTahun);
+
+        // 4. Filter berdasarkan Tahun (jika dipilih)
+        let finalData = allMahasiswaData;
+        if (filterTahun !== "all") {
+            finalData = allMahasiswaData.filter(m => m.tahun_masuk === filterTahun);
+        }
+
+        tampilkanTabel(finalData, prodi, filterTahun);
+
     } catch (error) {
-        errorBox.textContent = "Gagal mengambil data: " + error.message;
+        errorBox.textContent = `Error: ${error.message} (Pastikan jaringan stabil atau CORS Proxy tidak down).`;
         errorBox.style.display = 'block';
     } finally {
-        loading.style.display = 'none';
+        loadingBox.style.display = 'none';
         btnCari.disabled = false;
     }
 });
 
-// Fungsi Menampilkan Tabel
-function tampilkanData(data) {
-    jumlahData.textContent = data.length;
-    resultBox.style.display = 'block';
+function updateDropdownTahun(data, selectedTahun) {
+    let tahunSet = new Set();
+    data.forEach(m => {
+        if (m.tahun_masuk) tahunSet.add(m.tahun_masuk);
+    });
 
-    if (data.length === 0) return;
+    let tahunArray = Array.from(tahunSet).sort((a, b) => b - a); // Urutkan tahun terbaru
+    
+    selectTahun.innerHTML = '<option value="all">Semua Tahun</option>';
+    tahunArray.forEach(t => {
+        let option = document.createElement('option');
+        option.value = t;
+        option.textContent = t;
+        if (t === selectedTahun) option.selected = true;
+        selectTahun.appendChild(option);
+    });
+}
+
+function tampilkanTabel(data, prodiVal, tahunVal) {
+    infoJumlah.textContent = data.length;
+    infoProdi.textContent = prodiVal === "all" ? "Semua Program Studi" : prodiVal;
+    infoTahun.textContent = tahunVal === "all" ? "Semua Tahun" : tahunVal;
+
+    if (data.length === 0) {
+        errorBox.textContent = "Tidak ada data mahasiswa yang ditemukan untuk filter tersebut.";
+        errorBox.style.display = 'block';
+        return;
+    }
 
     data.forEach(mhs => {
         let tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${mhs.nama}</td>
-            <td>${mhs.nim}</td>
-            <td>${mhs.nama_prodi}</td>
-            <td>${mhs.nama_pt}</td>
+            <td class="fw-semibold">${mhs.nim || '-'}</td>
+            <td>${mhs.nama || '-'}</td>
+            <td>${mhs.nama_prodi || '-'}</td>
+            <td>${mhs.jenjang || '-'}</td>
+            <td>${mhs.tahun_masuk || '-'}</td>
+            <td><span class="badge ${mhs.status_saat_ini.includes('Aktif') ? 'bg-success' : 'bg-secondary'}">${mhs.status_saat_ini}</span></td>
         `;
-        bodyMahasiswa.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 
-    tableMahasiswa.style.display = 'table';
+    tableContainer.style.display = 'block';
 }
 
-// Tombol Reset
 btnReset.addEventListener('click', () => {
     inputKeyword.value = '';
     selectProdi.value = 'all';
+    selectTahun.innerHTML = '<option value="all">Semua Tahun</option>';
     errorBox.style.display = 'none';
-    resultBox.style.display = 'none';
-    tableMahasiswa.style.display = 'none';
-    bodyMahasiswa.innerHTML = '';
+    tableContainer.style.display = 'none';
+    infoJumlah.textContent = '-';
+    infoProdi.textContent = 'Semua Program Studi';
+    infoTahun.textContent = 'Semua Tahun';
 });
 
-// (Opsional) Fungsi ini bisa dipakai untuk memuat daftar prodi otomatis saat halaman dimuat
-async function muatProdi() {
-    try {
-        const response = await fetchData(KAMPUS);
-        if (response.data && response.data.prodi) {
-            let listProdi = response.data.prodi.filter(p => p.pt.toLowerCase().includes("lhokseumawe"));
-            listProdi.forEach(p => {
-                let opt = document.createElement('option');
-                opt.value = p.nama;
-                opt.textContent = p.jenjang + " - " + p.nama;
-                selectProdi.appendChild(opt);
-            });
-        }
-    } catch (e) {
-        console.error("Gagal memuat prodi otomatis", e);
-    }
-}
-
-// Jalankan muat prodi saat awal buka web
-muatProdi();
+// Mulai aplikasi
+init();
