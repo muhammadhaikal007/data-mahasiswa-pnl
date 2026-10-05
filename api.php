@@ -134,7 +134,7 @@ function apiGet(string $url): array
             CURLOPT_SSL_VERIFYHOST => false,
             
             // Konfigurasi Proxy
-            CURLOPT_PROXY => '103.165.155.22:2016',
+            CURLOPT_PROXY => '103.144.208.178:1088',
             CURLOPT_HTTPPROXYTUNNEL => true
         ]
     );
@@ -220,7 +220,7 @@ function apiPostJson(
             CURLOPT_SSL_VERIFYHOST => false,
             
             // Konfigurasi Proxy
-            CURLOPT_PROXY => '103.165.155.22:2016',
+            CURLOPT_PROXY => '103.144.208.178:1088',
             CURLOPT_HTTPPROXYTUNNEL => true
         ]
     );
