@@ -1,0 +1,224 @@
+{
+    "success": true,
+    "message": "Program Studi berhasil diambil dari API PDDIKTI.",
+    "data": {
+        "items": [
+            {
+                "id": "31kP95M8VPTZF5s-wtb6h5VpJmxV3GcseMRPGawHkBg_BG5gBqkl8EQmVy--vplKWlmvww==",
+                "nama_prodi": "ADMINISTRASI BISNIS",
+                "jenjang": "D3"
+            },
+            {
+                "id": "U911h9YH5jhE7PZV8gl3wiXm2nfOEJbW2Igf1ifckGftgukYe9E-oZoieinTz-F6LLHwVg==",
+                "nama_prodi": "AKUNTANSI",
+                "jenjang": "D3"
+            },
+            {
+                "id": "cLzPRMHGTn78p7Fb_Fz1Bw-wL__L5HVm-DMMC5z9XzzZfACyWweYHDmGQYtaKNCR0wb66Q==",
+                "nama_prodi": "AKUNTANSI LEMBAGA KEUANGAN SYARIAH",
+                "jenjang": "D4"
+            },
+            {
+                "id": "4PA8WGSWPb3uQ4kQUd-D0v1Qd_0fVqezmv0psAB2pN28ELTfpaGJK-6KCHEU9O3-Cie3Wg==",
+                "nama_prodi": "AKUNTANSI SEKTOR PUBLIK",
+                "jenjang": "D4"
+            },
+            {
+                "id": "9YHV_T1PlPwPdsRvBOndjlgdi8lN8xXQ9SkKWEGTC9EPwbeTSMDfW7p3UikqMQGsE-YxdQ==",
+                "nama_prodi": "BAHASA INGGRIS UNTUK KOMUNIKASI BISNIS DAN PROFESIONAL",
+                "jenjang": "D4"
+            },
+            {
+                "id": "P7agzc3uMS1pMl6BU9xXkS9w52nfltqMrEssPZJHZBg_CBT4hufI_JKNir7iLM6OIznbPg==",
+                "nama_prodi": "KEUANGAN ISLAM TERAPAN",
+                "jenjang": "S2 TERAPAN"
+            },
+            {
+                "id": "bGSGNXs7BmVV2hCLkCzIkiKXPEo1mWEKZ7aw6m2lC3lI8OcwoeW1rLhRNr0NUfJ2fLw4yA==",
+                "nama_prodi": "MANAJEMEN KEUANGAN SEKTOR PUBLIK",
+                "jenjang": "D4"
+            },
+            {
+                "id": "cZUZ2LKk6QB8ZEXwei-ZYLYSeeP2f9pDUQ5yjj-arMs1BmGPQwMFyIdD54qTSAQFRWKYew==",
+                "nama_prodi": "PENGUKURAN DAN PENGAMBARAN TAPAK BANGUNAN GEDUNG",
+                "jenjang": "D2"
+            },
+            {
+                "id": "jcoJ8WANloMjK8heBaN8YpErk1sLh4IRZU7sKv7BTunAnTWng4vvajuqXhZfsCjRRRaUgw==",
+                "nama_prodi": "PERBANKAN DAN KEUANGAN",
+                "jenjang": "D3"
+            },
+            {
+                "id": "IV7M-CkeLAbmAKuXUJM2H2D8e0LwggtNkj5GfOoRUbCM-LsIXBJxjGsAL7Uo1zetHFt-OA==",
+                "nama_prodi": "REKAYASA TRANSPORTASI",
+                "jenjang": "D4"
+            },
+            {
+                "id": "uwhZVPJlAZunTltRatMozf2nAgWe633OAqk4po7JfpOApWuAG7vEqkbkD4QYsW_HqdNa5Q==",
+                "nama_prodi": "TEKNIK ELEKTRONIKA K. ACEH BARAT",
+                "jenjang": "D2"
+            },
+            {
+                "id": "XIqIx__2Kl4jBE7AVxmZ1L_Xflf7A1-u9KBHdpOvaVr2C8_IcxuF1_ERv0h1ertNiBnthA==",
+                "nama_prodi": "TEKNIK INFORMATIKA",
+                "jenjang": "D4"
+            },
+            {
+                "id": "50WmN8_8Qd8Enqj9l0x7tJe0Te02K51mwmw9loBPPGseqlv7q_elLwL0rxBZCMUybHZDuA==",
+                "nama_prodi": "TEKNIK INFORMATIKA KAMPUS ACEH UTARA",
+                "jenjang": "D2"
+            },
+            {
+                "id": "owsWJznpuScCApXemoqj3aBA0dY3sSaSc9-mgw-K5Yho3BYt4uj4gQXZco4UCPmSMWhgmg==",
+                "nama_prodi": "TEKNIK LISTRIK KAMPUS KABUPATEN LANGSA",
+                "jenjang": "D1"
+            },
+            {
+                "id": "MIiV3FH_qsSQZwHPHum0lw8q5n8_SmL0WS1ClfwwppZvui_1t-k-vDUCnNgQxJng-oIQYQ==",
+                "nama_prodi": "TEKNIK MESIN KAMPUS KABUPATEN ACEH BARAT",
+                "jenjang": "D2"
+            },
+            {
+                "id": "FJ08-Oqvs1IkMl31zHBZpyZAoGKPCN3YC_fKu9j9TJTIQJnBv2BNKP2Xu5wYfuEHicf1ow==",
+                "nama_prodi": "TEKNIK MESIN KAMPUS LANGSA",
+                "jenjang": "D2"
+            },
+            {
+                "id": "hTFZPQjSgGMX_NtKnQSEG7zWEMa1Nc9wYTlUaPfqQV5IN3qBd5gB13qtmlU8o7Z7bDC1Bw==",
+                "nama_prodi": "TEKNIK MESIN PERAWATAN DAN PERBAIKAN KAMPUS ACEH UTARA",
+                "jenjang": "D2"
+            },
+            {
+                "id": "4f2S1xeYJlefuQDzvlxJrtreydnWvgWdCMii0kglcoQ8fF5hiyA7y6dqrL3XX3298JdcXA==",
+                "nama_prodi": "TEKNIK MULTIMEDIA DAN JARINGAN",
+                "jenjang": "D3"
+            },
+            {
+                "id": "_NWSMCy3s8K8QpxtRo0UMbSxnuAPHeR4OmTFOcfdpC7OggJXxOfunLyJA23hTzk_yR0dmw==",
+                "nama_prodi": "TEKNIK SIPIL K. ACEH BARAT",
+                "jenjang": "D2"
+            },
+            {
+                "id": "SGlIFmRY5raXq45fd_xZcRssFBSN99OeJBnRGKM276t5qnegJ-1bzLMpNQ-WtgjuSjgMwA==",
+                "nama_prodi": "TEKNIK SIPIL KAMPUS ACEH UTARA",
+                "jenjang": "D2"
+            },
+            {
+                "id": "iOU6Jy9d5oSyiom66BSZ1ytNiT958fVKVWWfmWOFnLubvh4dCfmAfS6dlwXwP7jLkrAV2w==",
+                "nama_prodi": "TEKNOLOGI ELEKTRONIKA",
+                "jenjang": "D3"
+            },
+            {
+                "id": "3vHkCRv64VHGfLG4C1YPlskVXQyciANm79aOWDUTfWKQLecgiwuHN27KgeNC5n8gBvuB9Q==",
+                "nama_prodi": "TEKNOLOGI INDUSTRI",
+                "jenjang": "D3"
+            },
+            {
+                "id": "KuP8evSd8zdUlzqREu_4bjW9BfETT0OXfmkaWcdUtXrrvO2PJ2lAljZiWcpXYnlwhgm7RA==",
+                "nama_prodi": "TEKNOLOGI KIMIA",
+                "jenjang": "D3"
+            },
+            {
+                "id": "9j_k-OAkwoFfWyOTYgrk8t7kKP1ADNU4jDsx1FMzl37aFV1OPfqeZPC7t8jnsUN3yZJ5Ug==",
+                "nama_prodi": "TEKNOLOGI KONSTRUKSI BANGUNAN AIR",
+                "jenjang": "D3"
+            },
+            {
+                "id": "-DLk-zU9Fin57QCxyc3UpkQ6AXDi8OYGKty22-u-JbsfURQTAhkARgYUkkqGP0oBEN_10Q==",
+                "nama_prodi": "TEKNOLOGI KONSTRUKSI BANGUNAN GEDUNG",
+                "jenjang": "D3"
+            },
+            {
+                "id": "QrckTolAJ8nLHKju6FFtenbuzIWhz3Pd_I-dZLJkCT_ZmfRku39aucEaMX4wiy4yeam7TQ==",
+                "nama_prodi": "TEKNOLOGI KONSTRUKSI JALAN DAN JEMBATAN",
+                "jenjang": "D3"
+            },
+            {
+                "id": "sCY3SLhYdwRXe5KfJXp5rVnoCXRnChwcy3Hz9Bon77Kpwnag5kSUvUSdze8rA-HCFZ9oqw==",
+                "nama_prodi": "TEKNOLOGI LISTRIK",
+                "jenjang": "D3"
+            },
+            {
+                "id": "MgIxHNXL9VO0bbqTmVKYgjPoBHj4B687Z2WdDQJ0arQ6uCveZbzh4zLZEZ1AOuDWlTpmXw==",
+                "nama_prodi": "TEKNOLOGI MESIN",
+                "jenjang": "D3"
+            },
+            {
+                "id": "apmp2BkVLk3tPQKgMsXQvO_qtBdh_eZyu8Rgf_Tmq6CYsOrBLoMG4j6w33XkHAwbe3BpSQ==",
+                "nama_prodi": "TEKNOLOGI PENGOLAHAN MINYAK DAN GAS",
+                "jenjang": "D3"
+            },
+            {
+                "id": "P6evur4mLr8RkMXXZ4ss_D3FFfIWVtDl_L-GDQJLTz1sF3TLmaC5fWMqJolah9p2OxjL7Q==",
+                "nama_prodi": "TEKNOLOGI REKAYASA  MANUFAKTUR",
+                "jenjang": "D4"
+            },
+            {
+                "id": "4YOChlTuUDupktCiHOaN-3dl0bLuhSLusAwWY7Ph5DgavtwcGOwlv1Mfi_SKY1GYg7KdZA==",
+                "nama_prodi": "TEKNOLOGI REKAYASA INSTRUMENTASI DAN KONTROL",
+                "jenjang": "D4"
+            },
+            {
+                "id": "9DRis4uaBVL1HOERkVtFjCK0u0zVsNQVCScCI7n_S_-yANbNSinuPWvsiL4eEFtPcfpFBg==",
+                "nama_prodi": "TEKNOLOGI REKAYASA JARINGAN TELEKOMUNIKASI",
+                "jenjang": "D4"
+            },
+            {
+                "id": "zi0nffm1-lTAFuptzoA1JvRAEzN4EqcpMUo7_KDxlfhO-Vrw9KZOsFb76ep0aE7CjD8sDw==",
+                "nama_prodi": "TEKNOLOGI REKAYASA KIMIA BERKELANJUTAN",
+                "jenjang": "D4"
+            },
+            {
+                "id": "OdojWFTkzt4VGicTwWJHHqiwx0MHXdI4NtWGwWzYA8cQ4LNSFl5ENkKIZN1q_D4NddUk2A==",
+                "nama_prodi": "TEKNOLOGI REKAYASA KIMIA INDUSTRI",
+                "jenjang": "D4"
+            },
+            {
+                "id": "8vl-pQAJ33bxoQAnImoKjgLh9ed8IrqF7QMUo7kAuV95yMqnRZlfYPHXH2bHKGjQJChq3g==",
+                "nama_prodi": "TEKNOLOGI REKAYASA KOMPUTER JARINGAN",
+                "jenjang": "D4"
+            },
+            {
+                "id": "hvIT9oob8uaC-hbBCJSTa3ZD5WTVHjP5IXJP8gserDbgQtdL2H1DGXMvMyUu7wk8gO5Lpw==",
+                "nama_prodi": "TEKNOLOGI REKAYASA KONSTRUKSI BANGUNAN GEDUNG",
+                "jenjang": "D4"
+            },
+            {
+                "id": "Hjoct2Ivb1u0FSEhc-pnK43xBqfJomSVnFvUKG1gTABhc_DhlhZYPjxwt4ZPuv2jNGWNSQ==",
+                "nama_prodi": "TEKNOLOGI REKAYASA KONSTRUKSI JALAN DAN JEMBATAN",
+                "jenjang": "D4"
+            },
+            {
+                "id": "F_nQSFZmWP8f3VY95PC32Ir0scQ-eTlRhUuBxVpgnj_Fhb2KO7mLueLy_vZV06jAX2E-1g==",
+                "nama_prodi": "TEKNOLOGI REKAYASA MEKATRONIKA",
+                "jenjang": "D4"
+            },
+            {
+                "id": "XAXs41Dm2a3EWJBD8yl-STVvdzSaxQk6adNneL3hjHFvK79AldXq3m7QYzHHcjO9DM5v0A==",
+                "nama_prodi": "TEKNOLOGI REKAYASA MULTIMEDIA",
+                "jenjang": "D4"
+            },
+            {
+                "id": "8RQYSwCepc0-8_yfXDHtoYcuYZJki2gLUV8cfarCBcCrt5VFjMs2Iy09SDRSYaH87w0WSQ==",
+                "nama_prodi": "TEKNOLOGI REKAYASA PEMBANGKIT ENERGI",
+                "jenjang": "D4"
+            },
+            {
+                "id": "ttqnPenje-Pf2_cp8n1NrzjQZxnDyB3LGfD1OavCeqvisapt81H4Wu243ZHcJ9rPweqKlA==",
+                "nama_prodi": "TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI",
+                "jenjang": "D4"
+            },
+            {
+                "id": "NN6pkGzgMCSceU4BTCVxj00rcLUDWKjsHzlcnX8OmW4GkVceZKbbabdve006SHx-1zUj-Q==",
+                "nama_prodi": "TEKNOLOGI REKAYASA PERANGKAT LUNAK",
+                "jenjang": "D4"
+            },
+            {
+                "id": "T5xoHnSS4ImKs7VJylL3mD6RS5JTK65RS7thqHLVO18eSvAcpn6E43N-YDG1wd8iGvJ2Xg==",
+                "nama_prodi": "TEKNOLOGI TELEKOMUNIKASI",
+                "jenjang": "D3"
+            }
+        ],
+        "jumlah": 43
+    }
+}

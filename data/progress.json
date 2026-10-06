@@ -1,0 +1,262 @@
+{
+    "prodi": {
+        "administrasi bisnis": {
+            "nama": "ADMINISTRASI BISNIS",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:04:37"
+        },
+        "akuntansi": {
+            "nama": "AKUNTANSI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:05:16"
+        },
+        "akuntansi lembaga keuangan syariah": {
+            "nama": "AKUNTANSI LEMBAGA KEUANGAN SYARIAH",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:08:14"
+        },
+        "akuntansi sektor publik": {
+            "nama": "AKUNTANSI SEKTOR PUBLIK",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:06:01"
+        },
+        "bahasa inggris untuk komunikasi bisnis dan profesional": {
+            "nama": "BAHASA INGGRIS UNTUK KOMUNIKASI BISNIS DAN PROFESIONAL",
+            "status": "empty",
+            "jumlah": 0,
+            "waktu": "2026-10-05 16:06:05"
+        },
+        "keuangan islam terapan": {
+            "nama": "KEUANGAN ISLAM TERAPAN",
+            "status": "success",
+            "jumlah": 53,
+            "waktu": "2026-10-05 16:10:37"
+        },
+        "manajemen keuangan sektor publik": {
+            "nama": "MANAJEMEN KEUANGAN SEKTOR PUBLIK",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:11:25"
+        },
+        "pengukuran dan pengambaran tapak bangunan gedung": {
+            "nama": "PENGUKURAN DAN PENGAMBARAN TAPAK BANGUNAN GEDUNG",
+            "status": "empty",
+            "jumlah": 0,
+            "waktu": "2026-10-05 16:11:29"
+        },
+        "perbankan dan keuangan": {
+            "nama": "PERBANKAN DAN KEUANGAN",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:12:18"
+        },
+        "rekayasa transportasi": {
+            "nama": "REKAYASA TRANSPORTASI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:13:05"
+        },
+        "teknik elektronika k. aceh barat": {
+            "nama": "TEKNIK ELEKTRONIKA K. ACEH BARAT",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:14:33"
+        },
+        "teknik informatika": {
+            "nama": "TEKNIK INFORMATIKA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:15:13"
+        },
+        "teknik informatika kampus aceh utara": {
+            "nama": "TEKNIK INFORMATIKA KAMPUS ACEH UTARA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:15:59"
+        },
+        "teknik listrik kampus kabupaten langsa": {
+            "nama": "TEKNIK LISTRIK KAMPUS KABUPATEN LANGSA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:16:39"
+        },
+        "teknik mesin kampus kabupaten aceh barat": {
+            "nama": "TEKNIK MESIN KAMPUS KABUPATEN ACEH BARAT",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:17:23"
+        },
+        "teknik mesin kampus langsa": {
+            "nama": "TEKNIK MESIN KAMPUS LANGSA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:18:57"
+        },
+        "teknik mesin perawatan dan perbaikan kampus aceh utara": {
+            "nama": "TEKNIK MESIN PERAWATAN DAN PERBAIKAN KAMPUS ACEH UTARA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:19:40"
+        },
+        "teknik multimedia dan jaringan": {
+            "nama": "TEKNIK MULTIMEDIA DAN JARINGAN",
+            "status": "empty",
+            "jumlah": 0,
+            "waktu": "2026-10-05 16:19:44"
+        },
+        "teknik sipil k. aceh barat": {
+            "nama": "TEKNIK SIPIL K. ACEH BARAT",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:20:28"
+        },
+        "teknik sipil kampus aceh utara": {
+            "nama": "TEKNIK SIPIL KAMPUS ACEH UTARA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:21:19"
+        },
+        "teknologi elektronika": {
+            "nama": "TEKNOLOGI ELEKTRONIKA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:23:40"
+        },
+        "teknologi industri": {
+            "nama": "TEKNOLOGI INDUSTRI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:24:24"
+        },
+        "teknologi kimia": {
+            "nama": "TEKNOLOGI KIMIA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:25:04"
+        },
+        "teknologi konstruksi bangunan air": {
+            "nama": "TEKNOLOGI KONSTRUKSI BANGUNAN AIR",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:25:45"
+        },
+        "teknologi konstruksi bangunan gedung": {
+            "nama": "TEKNOLOGI KONSTRUKSI BANGUNAN GEDUNG",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:26:25"
+        },
+        "teknologi konstruksi jalan dan jembatan": {
+            "nama": "TEKNOLOGI KONSTRUKSI JALAN DAN JEMBATAN",
+            "status": "success",
+            "jumlah": 53,
+            "waktu": "2026-10-05 16:28:31"
+        },
+        "teknologi listrik": {
+            "nama": "TEKNOLOGI LISTRIK",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:29:08"
+        },
+        "teknologi mesin": {
+            "nama": "TEKNOLOGI MESIN",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:29:41"
+        },
+        "teknologi pengolahan minyak dan gas": {
+            "nama": "TEKNOLOGI PENGOLAHAN MINYAK DAN GAS",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:30:18"
+        },
+        "teknologi rekayasa  manufaktur": {
+            "nama": "TEKNOLOGI REKAYASA  MANUFAKTUR",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:31:06"
+        },
+        "teknologi rekayasa instrumentasi dan kontrol": {
+            "nama": "TEKNOLOGI REKAYASA INSTRUMENTASI DAN KONTROL",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:32:44"
+        },
+        "teknologi rekayasa jaringan telekomunikasi": {
+            "nama": "TEKNOLOGI REKAYASA JARINGAN TELEKOMUNIKASI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:33:42"
+        },
+        "teknologi rekayasa kimia berkelanjutan": {
+            "nama": "TEKNOLOGI REKAYASA KIMIA BERKELANJUTAN",
+            "status": "empty",
+            "jumlah": 0,
+            "waktu": "2026-10-05 16:33:46"
+        },
+        "teknologi rekayasa kimia industri": {
+            "nama": "TEKNOLOGI REKAYASA KIMIA INDUSTRI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:34:41"
+        },
+        "teknologi rekayasa komputer jaringan": {
+            "nama": "TEKNOLOGI REKAYASA KOMPUTER JARINGAN",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:35:35"
+        },
+        "teknologi rekayasa konstruksi bangunan gedung": {
+            "nama": "TEKNOLOGI REKAYASA KONSTRUKSI BANGUNAN GEDUNG",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:36:52"
+        },
+        "teknologi rekayasa konstruksi jalan dan jembatan": {
+            "nama": "TEKNOLOGI REKAYASA KONSTRUKSI JALAN DAN JEMBATAN",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:37:38"
+        },
+        "teknologi rekayasa mekatronika": {
+            "nama": "TEKNOLOGI REKAYASA MEKATRONIKA",
+            "status": "success",
+            "jumlah": 90,
+            "waktu": "2026-10-05 16:38:23"
+        },
+        "teknologi rekayasa multimedia": {
+            "nama": "TEKNOLOGI REKAYASA MULTIMEDIA",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:39:08"
+        },
+        "teknologi rekayasa pembangkit energi": {
+            "nama": "TEKNOLOGI REKAYASA PEMBANGKIT ENERGI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:39:52"
+        },
+        "teknologi rekayasa pengelasan dan fabrikasi": {
+            "nama": "TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:41:55"
+        },
+        "teknologi rekayasa perangkat lunak": {
+            "nama": "TEKNOLOGI REKAYASA PERANGKAT LUNAK",
+            "status": "success",
+            "jumlah": 17,
+            "waktu": "2026-10-05 16:42:05"
+        },
+        "teknologi telekomunikasi": {
+            "nama": "TEKNOLOGI TELEKOMUNIKASI",
+            "status": "success",
+            "jumlah": 100,
+            "waktu": "2026-10-05 16:42:50"
+        }
+    }
+}
