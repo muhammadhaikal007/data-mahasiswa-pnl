@@ -1,0 +1,440 @@
+<?php
+
+require_once __DIR__ . '/config.php';
+
+?>
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Data Mahasiswa PNL - API PDDIKTI
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css?v=6"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                PNL
+            </div>
+
+            <div>
+
+                <h1>
+                    Data Mahasiswa PNL
+                </h1>
+
+                <p>
+                    Sistem Informasi Berbasis API PDDIKTI
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="source">
+
+            <span>
+                Sumber Data
+            </span>
+
+            <strong>
+                PDDIKTI
+            </strong>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<section class="hero">
+
+    <div class="hero-inner">
+
+        <h2>
+            Data Mahasiswa
+            Politeknik Negeri Lhokseumawe
+        </h2>
+
+        <p>
+            Pencarian dan pemfilteran data mahasiswa
+            berdasarkan Program Studi dan Tahun Masuk.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<main class="container">
+
+
+    <!-- ========================================================
+         FILTER
+    ======================================================== -->
+
+    <section class="filter-card">
+
+
+        <div class="filter-title">
+
+            <h3>
+                Filter Data Mahasiswa
+            </h3>
+
+            <p>
+                Data ditampilkan secara otomatis.
+                Gunakan filter untuk mempersempit hasil.
+            </p>
+
+        </div>
+
+
+        <div class="filter-grid">
+
+
+            <div class="form-group">
+
+                <label for="searchInput">
+                    Nama / NIM
+                </label>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Opsional: cari nama atau NIM"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="prodiFilter">
+                    Program Studi
+                </label>
+
+                <select id="prodiFilter">
+
+                    <option value="all">
+                        Semua Program Studi
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="tahunFilter">
+                    Tahun Masuk
+                </label>
+
+                <select id="tahunFilter">
+
+                    <option value="all">
+                        Semua Tahun
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                id="btnTerapkan"
+                type="button"
+                class="btn btn-primary"
+            >
+                Terapkan Filter
+            </button>
+
+
+            <button
+                id="btnReset"
+                type="button"
+                class="btn btn-secondary"
+            >
+                Reset
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ========================================================
+         STATISTIK
+    ======================================================== -->
+
+    <section class="stat-grid">
+
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Hasil API Ditemukan
+            </span>
+
+            <strong
+                id="statTotal"
+                class="stat-value"
+            >
+                -
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Program Studi
+            </span>
+
+            <strong
+                id="statProdi"
+                class="stat-value"
+            >
+                Semua Program Studi
+            </strong>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <span class="stat-label">
+                Tahun Masuk
+            </span>
+
+            <strong
+                id="statTahun"
+                class="stat-value"
+            >
+                Semua Tahun
+            </strong>
+
+        </div>
+
+
+    </section>
+
+
+
+    <div
+        id="messageBox"
+        class="message hidden"
+    ></div>
+
+
+
+    <div
+        id="loadingBox"
+        class="loading hidden"
+    >
+
+        <div class="spinner"></div>
+
+        <p id="loadingText">
+            Mengambil data mahasiswa dari PDDIKTI...
+        </p>
+
+        <small>
+            Detail mahasiswa sedang diproses.
+            Proses pertama dapat memerlukan waktu.
+        </small>
+
+    </div>
+
+
+
+    <!-- ========================================================
+         TABLE
+    ======================================================== -->
+
+    <section
+        id="tableSection"
+        class="table-card hidden"
+    >
+
+
+        <div class="table-header">
+
+            <div>
+
+                <h3>
+                    Data Mahasiswa
+                </h3>
+
+                <p id="tableDescription">
+                    Semua Program Studi - Semua Tahun
+                </p>
+
+            </div>
+
+
+            <div id="resultInfo">
+                0 hasil API
+            </div>
+
+        </div>
+
+
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>No</th>
+
+                        <th>Nama</th>
+
+                        <th>NIM</th>
+
+                        <th>Program Studi</th>
+
+                        <th>Jenjang</th>
+
+                        <th>Tahun Masuk</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="studentTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+
+        <div class="pagination">
+
+            <button
+                id="prevPage"
+                type="button"
+                class="page-button"
+            >
+                ← Sebelumnya
+            </button>
+
+
+            <div
+                id="pageNumbers"
+                class="page-numbers"
+            ></div>
+
+
+            <button
+                id="nextPage"
+                type="button"
+                class="page-button"
+            >
+                Berikutnya →
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <section class="note">
+
+        <strong>
+            Catatan:
+        </strong>
+
+        Nama, NIM, Program Studi, Tahun Masuk,
+        Jenjang, dan Status mahasiswa diperoleh
+        melalui API publik PDDIKTI.
+
+        Tahun Masuk berasal dari field
+        <strong>tanggal_masuk</strong>
+        pada detail mahasiswa dan tidak ditentukan
+        dari pola NIM.
+
+        Jumlah hasil merupakan jumlah data yang
+        dikembalikan oleh pencarian API dan tidak
+        merepresentasikan seluruh populasi mahasiswa PNL.
+
+    </section>
+
+
+</main>
+
+
+
+<footer>
+
+    <div>
+
+        Sistem Informasi Data Mahasiswa
+        Politeknik Negeri Lhokseumawe
+
+        <br>
+
+        Integrasi API PDDIKTI -
+        Mata Kuliah Sistem Terintegrasi
+
+    </div>
+
+</footer>
+
+
+
+<script src="script.js?v=6"></script>
+
+
+</body>
+
+</html>
